@@ -19,9 +19,13 @@ along with GNU QSORT; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA. */
 
-#ifdef sparc
-#include <alloca.h>
-#endif
+//#ifdef sparc Commented out no idea what sparc it does (A)
+// alloca.h Is replaced by the visual studio equivalent malloc.h
+// #include <alloca.h>
+#include "stdafx.h"
+#include <stdio.h>
+#include <malloc.h>
+//#endif
 
 /* Invoke the comparison function, returns either 0, < 0, or > 0. */
 #define CMP(A,B) ((*cmp)((A),(B)))
@@ -76,12 +80,8 @@ typedef struct
       smaller partition.  This *guarantees* no more than log (n)
       stack size is needed (actually O(1) in this case)! */
       
-int 
-qsort (base_ptr, total_elems, size, cmp)
-     char *base_ptr;
-     int total_elems;
-     int size;
-     int (*cmp)();
+int gnuqsort (char *base_ptr, int total_elems, int size, int(*cmp)())
+
 {
   /* Allocating SIZE bytes for a pivot buffer facilitates a better 
      algorithm below since we can do comparisons directly on the pivot. */
