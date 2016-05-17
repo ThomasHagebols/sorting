@@ -15,9 +15,13 @@ using namespace std::chrono;
 //gnuqsort(char *base_ptr, int total_elems, int size, int(*cmp)());
 
 // Initialize the arrays which need to be sorted and calculate the number of elements in the array "divide the total size of the array by the size of the array element"
-int unsorted[10];
-int copyUnsorted[10];
+int unsorted[100];
+int copyUnsorted[100];
 int length = sizeof(unsorted) / sizeof(int);
+
+int patsort(int values[], int length);
+// int patsortplus(int values[], int length);
+
 
 int cmpfunc(const void * a, const void * b)
 {
@@ -64,7 +68,8 @@ int main()
 			break;
 		case 1:
 			//Patience sort
-			qsort(copyUnsorted, length, sizeof(int), cmpfunc);
+ 			patsort(copyUnsorted, length);
+			//patsortplus(copyUnsorted, length);
 			break;
 		case 2:
 			//Patience+ sort

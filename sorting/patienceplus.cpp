@@ -13,6 +13,13 @@ struct pile_less {
 };
 
 template <class E>
+struct pile_begin_less {
+	bool operator()(const std::stack<E> &pile1, const std::stack<E> &pile2) const {
+		return pile1.back() < pile2.back();
+	}
+};
+
+template <class E>
 struct pile_greater {
 	bool operator()(const std::stack<E> &pile1, const std::stack<E> &pile2) const {
 		return pile1.top() > pile2.top();
@@ -21,11 +28,12 @@ struct pile_greater {
 
 
 template <class Iterator>
-void patience_sort(Iterator first, Iterator last) {
+void patience_sort_plus(Iterator first, Iterator last) {
 	typedef typename std::iterator_traits<Iterator>::value_type E;
 	typedef std::stack<E> Pile;
 
 	std::vector<Pile> piles;
+
 	// sort into piles
 	for (Iterator it = first; it != last; it++) {
 		E& x = *it;
@@ -33,8 +41,12 @@ void patience_sort(Iterator first, Iterator last) {
 		newPile.push(x);
 		typename std::vector<Pile>::iterator i =
 			std::lower_bound(piles.begin(), piles.end(), newPile, pile_less<E>());
+		typename std::vector<Pile>::iterator j =
+			std::lower_bound(piles.begin(), piles.end(), newPile, pile_begin_less<E>());
 		if (i != piles.end())
 			i->push(x);
+		else if (j != piles.begin())
+			j->push_back(newPile.end());
 		else
 			piles.push_back(newPile);
 	}
@@ -55,8 +67,8 @@ void patience_sort(Iterator first, Iterator last) {
 	assert(piles.empty());
 }
 
-int patsort(int values[], int length) {
-	patience_sort(values, values + length);
+int patsortplus(int values[], int length) {
+	patience_sort_plus(values, values + length);
 	return 0;
 }
 // No newline at end of file
