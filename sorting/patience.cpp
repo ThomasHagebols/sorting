@@ -26,6 +26,8 @@ void patience_sort(Iterator begin, Iterator end)
 	typedef std::stack<DataType> PileType;
 	std::vector<PileType> piles;
 
+
+
 	for (Iterator it = begin; it != end; it++)
 	{
 		PileType new_pile;
@@ -38,6 +40,8 @@ void patience_sort(Iterator begin, Iterator end)
 		else
 			insert_it->push(*it);
 	}
+
+
 	// sorted array already satisfies heap property for min-heap
 
 	for (Iterator it = begin; it != end; it++)
