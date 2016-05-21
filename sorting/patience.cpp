@@ -1,62 +1,58 @@
-#include <iostream>
+/* Code from http://euler.math.uga.edu/wiki/index.php?title=Patience_sorting
+TODO take a look at https://en.wikibooks.org/wiki/Algorithm_Implementation/Sorting/Patience_sort */
+
 #include <vector>
+#include <algorithm>
 #include <stack>
 #include <iterator>
-#include <algorithm>
-#include <cassert>
 
-template <class E>
-struct pile_less {
-	bool operator()(const std::stack<E> &pile1, const std::stack<E> &pile2) const {
-		return pile1.top() < pile2.top();
-	}
-};
+template<typename PileType>
+bool pile_less(const PileType& x, const PileType& y)
+{
+	return x.top() < y.top();
+}
 
-template <class E>
-struct pile_greater {
-	bool operator()(const std::stack<E> &pile1, const std::stack<E> &pile2) const {
-		return pile1.top() > pile2.top();
-	}
-};
+// reverse less predicate to turn max-heap into min-heap
+template<typename PileType>
+bool pile_more(const PileType& x, const PileType& y)
+{
+	return pile_less(y, x);
+}
 
+template<typename Iterator>
+void patience_sort(Iterator begin, Iterator end)
+{
+	typedef typename std::iterator_traits<Iterator>::value_type DataType;
+	typedef std::stack<DataType> PileType;
+	std::vector<PileType> piles;
 
-template <class Iterator>
-void patience_sort(Iterator first, Iterator last) {
-	typedef typename std::iterator_traits<Iterator>::value_type E;
-	typedef std::stack<E> Pile;
-
-	std::vector<Pile> piles;
-	// sort into piles
-	for (Iterator it = first; it != last; it++) {
-		E& x = *it;
-		Pile newPile;
-		newPile.push(x);
-		typename std::vector<Pile>::iterator i =
-			std::lower_bound(piles.begin(), piles.end(), newPile, pile_less<E>());
-		if (i != piles.end())
-			i->push(x);
+	for (Iterator it = begin; it != end; it++)
+	{
+		PileType new_pile;
+		new_pile.push(*it);
+		typename std::vector<PileType>::iterator insert_it =
+			std::lower_bound(piles.begin(), piles.end(), new_pile,
+				pile_less<PileType>);
+		if (insert_it == piles.end())
+			piles.push_back(new_pile);
 		else
-			piles.push_back(newPile);
+			insert_it->push(*it);
 	}
+	// sorted array already satisfies heap property for min-heap
 
-	// priority queue allows us to merge piles efficiently
-	// we use greater-than comparator for min-heap
-	std::make_heap(piles.begin(), piles.end(), pile_greater<E>());
-	for (Iterator it = first; it != last; it++) {
-		std::pop_heap(piles.begin(), piles.end(), pile_greater<E>());
-		Pile &smallPile = piles.back();
-		*it = smallPile.top();
-		smallPile.pop();
-		if (smallPile.empty())
+	for (Iterator it = begin; it != end; it++)
+	{
+		std::pop_heap(piles.begin(), piles.end(), pile_more<PileType>);
+		*it = piles.back().top();
+		piles.back().pop();
+		if (piles.back().empty())
 			piles.pop_back();
 		else
-			std::push_heap(piles.begin(), piles.end(), pile_greater<E>());
+			std::push_heap(piles.begin(), piles.end(), pile_more<PileType>);
 	}
-	assert(piles.empty());
 }
 
 int patsort(int values[], int length) {
 	patience_sort(values, values + length);
 	return 0;
 }
-// No newline at end of file

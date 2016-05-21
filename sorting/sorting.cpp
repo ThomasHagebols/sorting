@@ -15,8 +15,8 @@ using namespace std::chrono;
 //gnuqsort(char *base_ptr, int total_elems, int size, int(*cmp)());
 
 // Initialize the arrays which need to be sorted and calculate the number of elements in the array "divide the total size of the array by the size of the array element"
-int unsorted[100];
-int copyUnsorted[100];
+int unsorted[1000];
+int copyUnsorted[1000];
 int length = sizeof(unsorted) / sizeof(int);
 
 int patsort(int values[], int length);
@@ -34,26 +34,24 @@ int main()
 {
 	// Initializa random number generator seed (time) and n
 	std::srand(std::time(0));
-	int n;
-	int i;
 	
 	// Fill array with random variables
-	for (n = 0; n < length; n++)
+	for (int n{0}; n < length; n++)
 	{
 		unsorted[n] = std::rand();
 	}
 
 	// Perform different sorting algorithms and time the runtime
-	for (i = 0; i < 2; i++)
+	for (int i{0}; i < 2; i++)
 	{
 		std::copy(unsorted, unsorted + length, copyUnsorted);
 
 		// Optional printing of the generated array before sorting
-		printf("before sorting the list is: \n");
-		for (n = 0; n < length; n++)
-		{
-			printf("%d ", copyUnsorted[n]);
-		}
+		//printf("before sorting the list is: \n");
+		//for (int n{0}; n < length; n++)
+		//{
+		//	printf("%d ", copyUnsorted[n]);
+		//}
 		
 		high_resolution_clock::time_point t1 = high_resolution_clock::now();
 		switch (i)
@@ -89,11 +87,11 @@ int main()
 		high_resolution_clock::time_point t2 = high_resolution_clock::now();
 
 		// Optional printing of the array after sorting
-		printf("\nAfter sorting the list is: \n");
-		for (n = 0; n < length; n++)
-		{
-			printf("%d ", copyUnsorted[n]);
-		}
+		//printf("\nAfter sorting the list is: \n");
+		//for (int n{0}; n < length; n++)
+		//{
+		//	printf("%d ", copyUnsorted[n]);
+		//}
 
 		//Calculate and print execution time
 		auto duration = duration_cast<microseconds>(t2 - t1).count();
