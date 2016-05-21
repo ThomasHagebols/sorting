@@ -21,6 +21,9 @@
     <ClCompile Include="patience.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="patienceplus.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">

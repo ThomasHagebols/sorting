@@ -56,7 +56,7 @@ void patience_sort(Iterator begin, Iterator end)
 	}
 }
 
-int patsort(int values[], int length) {
+int patsort(long long values[], int length) {
 	patience_sort(values, values + length);
 	return 0;
 }
