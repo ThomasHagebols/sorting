@@ -15,8 +15,8 @@ using namespace std::chrono;
 //gnuqsort(char *base_ptr, int total_elems, int size, int(*cmp)());
 
 // Initialize the arrays which need to be sorted and calculate the number of elements in the array "divide the total size of the array by the size of the array element"
-long long unsorted[100];
-long long copyUnsorted[100];
+long long unsorted[5000];
+long long copyUnsorted[5000];
 int length = sizeof(unsorted) / sizeof(long long);
 
 int patsort(long long values[], int length);
@@ -49,10 +49,10 @@ int main()
 
 		// Optional printing of the generated array before sorting
 		printf("before sorting the list is: \n");
-		for (int n{0}; n < length; n++)
-		{
-			printf("%d ", copyUnsorted[n]);
-		}
+		//for (int n{0}; n < length; n++)
+		//{
+		//	printf("%d ", copyUnsorted[n]);
+		//}
 		
 		high_resolution_clock::time_point t1 = high_resolution_clock::now();
 		switch (i)
@@ -63,7 +63,7 @@ int main()
 		case 0:
 			//qsort
 			cout << "qsort:" << endl;
-			qsort(copyUnsorted, length, sizeof(int), cmpfunc);
+			qsort(copyUnsorted, length, sizeof(long long), cmpfunc);
 			//gnuqsort(copyUnsorted, length, sizeof(int), cmpfunc);
 			break;
 		case 1:
@@ -94,11 +94,11 @@ int main()
 		high_resolution_clock::time_point t2 = high_resolution_clock::now();
 
 		// Optional printing of the array after sorting
-		printf("\nAfter sorting the list is: \n");
-		for (int n{0}; n < length; n++)
-		{
-			printf("%d ", copyUnsorted[n]);
-		}
+		//printf("\nAfter sorting the list is: \n");
+		//for (int n{0}; n < length; n++)
+		//{
+		//	printf("%d ", copyUnsorted[n]);
+		//}
 
 		//Calculate and print execution time
 		auto duration = duration_cast<microseconds>(t2 - t1).count();

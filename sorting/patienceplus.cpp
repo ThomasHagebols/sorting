@@ -15,6 +15,14 @@ struct run_less {
 	}
 };
 
+template<class E>
+struct run_end_greater {
+	bool operator()(const std::list<E> &list1, const std::list<E> &list2) const {
+		return list1.back() < list2.back();
+	}
+};
+
+
 	template<class E>
 	struct run_greater {
 		bool operator()(const std::list<E> &list1, const std::list<E> &list2) const {
@@ -38,8 +46,14 @@ void patience_sort_plus(Iterator first, Iterator last) {
 			std::lower_bound(runs.begin(), runs.end(), newRun, run_less<E>());
 		if (i != runs.end())
 			i->emplace_front(x);
+		else // This adds the append to back functionality but currently loops the inefficient way (from begin to end, rather than end to begin, which might in some situations be slightly slower even).
+		{
+			std::upper_bound(runs.begin(), runs.end(), newRun, run_end_greater<E>());
+		if (i != runs.end())
+			i->emplace_back(x);
 		else
 			runs.push_back(newRun);
+		}
 	}
 
 	// priority queue allows us to merge runs efficiently
