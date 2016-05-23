@@ -5,8 +5,16 @@
 #include <algorithm>
 #include <cassert>
 #include <malloc.h>
+#include <math.h>
+
+// Needed for timer
+#include <iostream>
+#include <ctime>
+#include <chrono>
+using namespace std::chrono;
 
 using namespace std;
+
 
 template<class E>
 struct run_less {
@@ -31,13 +39,21 @@ struct run_end_greater {
 	};
 
 template<class Iterator>
-void patience_sort_plus(Iterator first, Iterator last) {
+void patience_sort_plus(Iterator first, Iterator last, int const length) {
 	typedef typename std::iterator_traits<Iterator>::value_type E;
 	typedef std::list<E> Run;
-	std::vector<long long> tails;
+
+	//Calculate the size 
+	//int memSize{ (int) sqrt(length) };
+
 	std::vector<Run> runs;
+	std::vector<long long> headsVal;
+	std::vector<long long> tailsVal;
+	std::vector<Run> * heads;
+	std::vector<Run> * tails;
 
 	// sort into runs
+	high_resolution_clock::time_point t1 = high_resolution_clock::now();
 	for (Iterator it = first; it != last; it++) {
 		E& x = *it;
 		Run newRun;
@@ -55,9 +71,11 @@ void patience_sort_plus(Iterator first, Iterator last) {
 			runs.push_back(newRun);
 		}
 	}
+	high_resolution_clock::time_point t2 = high_resolution_clock::now();
 
 	// priority queue allows us to merge runs efficiently
 	// we use greater-than comparator for min-heap
+	high_resolution_clock::time_point t3 = high_resolution_clock::now();
 	std::make_heap(runs.begin(), runs.end(), run_greater<E>());
 	for (Iterator it = first; it != last; it++) {
 		std::pop_heap(runs.begin(), runs.end(), run_greater<E>());
@@ -70,10 +88,17 @@ void patience_sort_plus(Iterator first, Iterator last) {
 			std::push_heap(runs.begin(), runs.end(), run_greater<E>());
 	}
 	assert(runs.empty());
+	high_resolution_clock::time_point t4 = high_resolution_clock::now();
+
+
+	auto durationPile = duration_cast<microseconds>(t2 - t1).count();
+	auto durationMerge = duration_cast<microseconds>(t4 - t3).count();
+	printf("\nTime needed for pileCre: %d microseconds ", durationPile);
+	printf("\nTime needed for merging: %d microseconds ", durationMerge);
 }
 
 int patsortplus(long long values[], int length) {
-	patience_sort_plus(values, values + length);
+	patience_sort_plus(values, values + length, length);
 	return 0;
 }
 

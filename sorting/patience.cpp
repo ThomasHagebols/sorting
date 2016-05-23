@@ -6,6 +6,12 @@ TODO take a look at https://en.wikibooks.org/wiki/Algorithm_Implementation/Sorti
 #include <stack>
 #include <iterator>
 
+// Needed for timer
+#include <iostream>
+#include <ctime>
+#include <chrono>
+using namespace std::chrono;
+
 template<typename PileType>
 bool pile_less(const PileType& x, const PileType& y)
 {
@@ -27,7 +33,7 @@ void patience_sort(Iterator begin, Iterator end)
 	std::vector<PileType> piles;
 
 
-
+	high_resolution_clock::time_point t1 = high_resolution_clock::now();
 	for (Iterator it = begin; it != end; it++)
 	{
 		PileType new_pile;
@@ -40,10 +46,10 @@ void patience_sort(Iterator begin, Iterator end)
 		else
 			insert_it->push(*it);
 	}
-
+	high_resolution_clock::time_point t2 = high_resolution_clock::now();
 
 	// sorted array already satisfies heap property for min-heap
-
+	high_resolution_clock::time_point t3 = high_resolution_clock::now();
 	for (Iterator it = begin; it != end; it++)
 	{
 		std::pop_heap(piles.begin(), piles.end(), pile_more<PileType>);
@@ -54,6 +60,13 @@ void patience_sort(Iterator begin, Iterator end)
 		else
 			std::push_heap(piles.begin(), piles.end(), pile_more<PileType>);
 	}
+	high_resolution_clock::time_point t4 = high_resolution_clock::now();
+
+
+	auto durationPile = duration_cast<microseconds>(t2 - t1).count();
+	auto durationMerge = duration_cast<microseconds>(t4 - t3).count();
+	printf("\nTime needed for pileCre: %d microseconds ", durationPile);
+	printf("\nTime needed for merging: %d microseconds ", durationMerge);
 }
 
 int patsort(long long values[], int length) {

@@ -48,7 +48,7 @@ int main()
 		std::copy(unsorted, unsorted + length, copyUnsorted);
 
 		// Optional printing of the generated array before sorting
-		printf("before sorting the list is: \n");
+		//printf("before sorting the list is: \n");
 		//for (int n{0}; n < length; n++)
 		//{
 		//	printf("%d ", copyUnsorted[n]);
