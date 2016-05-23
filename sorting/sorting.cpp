@@ -15,12 +15,14 @@ using namespace std::chrono;
 //gnuqsort(char *base_ptr, int total_elems, int size, int(*cmp)());
 
 // Initialize the arrays which need to be sorted and calculate the number of elements in the array "divide the total size of the array by the size of the array element"
-long long unsorted[5000];
-long long copyUnsorted[5000];
+long long unsorted[100000];
+long long copyUnsorted[100000];
 int length = sizeof(unsorted) / sizeof(long long);
 
 int patsort(long long values[], int length);
 int patsortplus(long long values[], int length);
+int quickSort(long long values[], int left, int right);
+
 // int patsortplus(int values[], int length);
 
 
@@ -43,12 +45,12 @@ int main()
 	}
 
 	// Perform different sorting algorithms and time the runtime
-	for (int i{0}; i < 3; i++)
+	for (int i{0}; i < 4; i++)
 	{
 		std::copy(unsorted, unsorted + length, copyUnsorted);
 
 		// Optional printing of the generated array before sorting
-		printf("before sorting the list is: \n");
+		//printf("before sorting the list is: \n");
 		//for (int n{0}; n < length; n++)
 		//{
 		//	printf("%d ", copyUnsorted[n]);
@@ -62,25 +64,25 @@ int main()
 			break;
 		case 0:
 			//qsort
-			cout << "qsort:" << endl;
-			qsort(copyUnsorted, length, sizeof(long long), cmpfunc);
+			cout << "quicksort clean:" << endl;
+			quickSort(copyUnsorted,0,length-1);
 			//gnuqsort(copyUnsorted, length, sizeof(int), cmpfunc);
 			break;
 		case 1:
 			//Patience sort
 			cout << "Patience sort:" << endl;
- 			patsort(copyUnsorted, length);
+ 			//patsort(copyUnsorted, length);
 			//patsortplus(copyUnsorted, length);
 			break;
 		case 2:
 			//Patience+ sort
 			cout << "Patient+ sort:" << endl;
-			patsortplus(copyUnsorted, length);
+			//patsortplus(copyUnsorted, length);
 			break;
 		case 3:
 			//P3 sort
-			cout << "P3 sort:" << endl;
-
+			cout << "Qsort Microsoft:" << endl;
+			qsort(copyUnsorted, length, sizeof(long long), cmpfunc);
 			break;
 		case 4:
 			//TimSort
