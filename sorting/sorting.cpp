@@ -14,10 +14,13 @@ using namespace std::chrono;
 // TODO Check if char is permitted in C++
 //gnuqsort(char *base_ptr, int total_elems, int size, int(*cmp)());
 
-// Initialize the arrays which need to be sorted and calculate the number of elements in the array "divide the total size of the array by the size of the array element"
-long long unsorted[5000];
-long long copyUnsorted[5000];
-int length = sizeof(unsorted) / sizeof(long long);
+// Initialize parameters
+int const length = 5000;
+bool timeSeed = false;
+
+// Initialize the arrays which need to be sorted
+long long unsorted[length];
+long long copyUnsorted[length];
 
 int patsort(long long values[], int length);
 int patsortplus(long long values[], int length);
@@ -34,7 +37,10 @@ int cmpfunc(const void * a, const void * b)
 int main()
 {
 	// Initializa random number generator seed (time) and n
-	std::srand(std::time(0));
+	if (timeSeed == true)
+		std::srand(std::time(0));
+	else
+		std::srand(1);
 	
 	// Fill array with random variables
 	for (int n{0}; n < length; n++)
@@ -42,67 +48,69 @@ int main()
 		unsorted[n] = std::rand();
 	}
 
+	printf("Number of values to be sorted: %d \n", length);
+	printf("Using time as seed value: %s \n", timeSeed ? "true" : "false");
+
+	// Optional printing of the generated array before sorting
+	//printf("before sorting the list is: \n");
+	//for (int n{0}; n < length; n++)
+	//{
+	//	printf("%d ", copyUnsorted[n]);
+	//}
+
 	// Perform different sorting algorithms and time the runtime
 	for (int i{0}; i < 3; i++)
 	{
 		std::copy(unsorted, unsorted + length, copyUnsorted);
-
-		// Optional printing of the generated array before sorting
-		//printf("before sorting the list is: \n");
-		//for (int n{0}; n < length; n++)
-		//{
-		//	printf("%d ", copyUnsorted[n]);
-		//}
 		
 		high_resolution_clock::time_point t1 = high_resolution_clock::now();
 		switch (i)
 		{
 			// Error. Unreachable declaration.
-			cout << "Error unreachable declaration in switch" << endl;
+			cout << "\n\nError unreachable declaration in switch" << endl;
 			break;
 		case 0:
 			//qsort
-			cout << "qsort:" << endl;
+			cout << "\n\nqsort:" << endl;
 			qsort(copyUnsorted, length, sizeof(long long), cmpfunc);
 			//gnuqsort(copyUnsorted, length, sizeof(int), cmpfunc);
 			break;
 		case 1:
 			//Patience sort
-			cout << "Patience sort:" << endl;
+			cout << "\n\nPatience sort:" << endl;
  			patsort(copyUnsorted, length);
-			//patsortplus(copyUnsorted, length);
 			break;
 		case 2:
 			//Patience+ sort
-			cout << "Patient+ sort:" << endl;
+			cout << "\n\nPatient+ sort:" << endl;
 			patsortplus(copyUnsorted, length);
 			break;
 		case 3:
 			//P3 sort
-			cout << "P3 sort:" << endl;
+			cout << "\n\nP3 sort:" << endl;
 
 			break;
 		case 4:
 			//TimSort
-			cout << "Timsort:" << endl;
+			cout << "\n\nTimsort:" << endl;
 			break;
 		default:
 			// i undefined
-			cout << "Switch out of bound:" << endl;
+			cout << "\n\nSwitch out of bound:" << endl;
 			break;
 		}
 		high_resolution_clock::time_point t2 = high_resolution_clock::now();
 
+		//Calculate and print execution time
+		auto duration = duration_cast<microseconds>(t2 - t1).count();
+		printf("\nTime needed for sorting: %d microseconds \n", duration);
+
 		// Optional printing of the array after sorting
-		//printf("\nAfter sorting the list is: \n");
-		//for (int n{0}; n < length; n++)
+		//printf("After sorting the list is: \n");
+		//for (int n{ 0 }; n < length; n++)
 		//{
 		//	printf("%d ", copyUnsorted[n]);
 		//}
-
-		//Calculate and print execution time
-		auto duration = duration_cast<microseconds>(t2 - t1).count();
-		printf("\nTime needed for sorting: %d microseconds \n\n", duration);
 	}
 
     return 0;

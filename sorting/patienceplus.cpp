@@ -82,10 +82,12 @@ void patience_sort_plus(Iterator first, Iterator last, int const length) {
 		Run &smallPile = runs.back();
 		*it = smallPile.front();
 		smallPile.pop_front();
-		if (smallPile.empty())
+		if (smallPile.empty()){
 			runs.pop_back();
-		else
+		}
+		else {
 			std::push_heap(runs.begin(), runs.end(), run_greater<E>());
+		}
 	}
 	assert(runs.empty());
 	high_resolution_clock::time_point t4 = high_resolution_clock::now();
@@ -97,7 +99,7 @@ void patience_sort_plus(Iterator first, Iterator last, int const length) {
 	printf("\nTime needed for merging: %d microseconds ", durationMerge);
 }
 
-int patsortplus(long long values[], int length) {
+int patsortplus(long long values[], int const length) {
 	patience_sort_plus(values, values + length, length);
 	return 0;
 }

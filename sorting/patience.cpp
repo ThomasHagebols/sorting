@@ -69,7 +69,7 @@ void patience_sort(Iterator begin, Iterator end)
 	printf("\nTime needed for merging: %d microseconds ", durationMerge);
 }
 
-int patsort(long long values[], int length) {
+int patsort(long long values[], int const length) {
 	patience_sort(values, values + length);
 	return 0;
 }
