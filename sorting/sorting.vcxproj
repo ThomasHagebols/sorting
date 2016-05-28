@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="patience.cpp" />
     <ClCompile Include="patienceplus.cpp" />
+    <ClCompile Include="qsort.cpp" />
     <ClCompile Include="sorting.cpp" />
   </ItemGroup>
   <ItemGroup>

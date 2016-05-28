@@ -26,13 +26,13 @@ int patsort(long long values[], int length);
 int patsortplus(long long values[], int length);
 // int patsortplus(int values[], int length);
 
+//typedef int(*__compar_d_fn_t) (const void *, const void *, void *);
+//void _quicksort(void *const pbase, size_t total_elems, size_t size, __compar_d_fn_t cmp, void *arg);
 
 int cmpfunc(const void * a, const void * b)
 {
 	return (*(long long*)a - *(long long*)b);
 }
-
-// int gnuqsort(int *base_ptr, int *total_elems, int *size, int(*cmp)());
 
 int main()
 {
@@ -73,7 +73,6 @@ int main()
 			//qsort
 			cout << "\n\nqsort:" << endl;
 			qsort(copyUnsorted, length, sizeof(long long), cmpfunc);
-			//gnuqsort(copyUnsorted, length, sizeof(int), cmpfunc);
 			break;
 		case 1:
 			//Patience sort
