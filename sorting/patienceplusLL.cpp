@@ -45,12 +45,20 @@ void patience_sort_plus(Iterator first, Iterator last, int const length) {
 
 	//Calculate the size 
 	//int memSize{ (int) sqrt(length) };
-
 	std::vector<Run> runs;
-	std::vector<long long> headsVal;
-	std::vector<long long> tailsVal;
-	std::vector<Run> * heads;
-	std::vector<Run> * tails;
+	//std::vector<long long> headsVal;
+	//std::vector<long long> tailsVal;
+	long long tailHighest;
+	long long headHighest;
+	tailHighest = 0;
+	headHighest = 0;
+	Run tailHigh;
+	Run headHigh;
+	tailHigh.emplace_front(tailHighest);
+	headHigh.emplace_front(headHighest);
+
+	//std::vector<Run> * heads;
+	//std::vector<Run> * tails;
 
 	// sort into runs
 	high_resolution_clock::time_point t1 = high_resolution_clock::now();
@@ -58,20 +66,50 @@ void patience_sort_plus(Iterator first, Iterator last, int const length) {
 		E& x = *it;
 		Run newRun;
 		newRun.emplace_front(x);
-		typename std::vector<Run>::iterator i =
-			std::lower_bound(runs.begin(), runs.end(), newRun, run_less<E>());
-		if (i != runs.end())
-			i->emplace_front(x);
-		else // This adds the append to back functionality but currently loops the inefficient way (from begin to end, rather than end to begin, which might in some situations be slightly slower even).
+		if (newRun.front() > tailHigh.front())
 		{
-			std::upper_bound(runs.begin(), runs.end(), newRun, run_end_greater<E>());
-		if (i != runs.end())
-			i->emplace_back(x);
+			if (newRun.front() < headHigh.front())
+			{
+				typename std::vector<Run>::iterator j =
+					std::upper_bound(runs.begin(), runs.end(), newRun, run_end_greater<E>());
+				if (j != runs.end())
+				{
+					j->emplace_front(x);
+					headHigh.pop_front();
+					headHigh.emplace_front(x);
+				}
+			}
+			else
+			{
+				runs.push_back(newRun);
+				tailHigh.pop_front();
+				tailHigh.emplace_front(x);
+				if (newRun.front() > headHigh.front())
+				{
+					headHigh.pop_front();
+					headHigh.emplace_front(x);
+				}
+			}
+		}
 		else
-			runs.push_back(newRun);
+		{
+			typename std::vector<Run>::iterator i =
+				std::lower_bound(runs.begin(), runs.end(), newRun, run_less<E>());
+			if (i != runs.end())
+			{
+				i->emplace_front(x);
+			}
+			else
+			{
+				runs.push_back(newRun);
+			}
 		}
 	}
+	
 	high_resolution_clock::time_point t2 = high_resolution_clock::now();
+
+	auto durationPile = duration_cast<microseconds>(t2 - t1).count();
+	printf("\nTime needed for pileCre: %d microseconds ", durationPile);
 
 	// priority queue allows us to merge runs efficiently
 	// we use greater-than comparator for min-heap
@@ -82,24 +120,22 @@ void patience_sort_plus(Iterator first, Iterator last, int const length) {
 		Run &smallPile = runs.back();
 		*it = smallPile.front();
 		smallPile.pop_front();
-		if (smallPile.empty()){
+		if (smallPile.empty())
 			runs.pop_back();
-		}
-		else {
+		else
 			std::push_heap(runs.begin(), runs.end(), run_greater<E>());
-		}
 	}
 	assert(runs.empty());
 	high_resolution_clock::time_point t4 = high_resolution_clock::now();
 
 
-	auto durationPile = duration_cast<microseconds>(t2 - t1).count();
+
 	auto durationMerge = duration_cast<microseconds>(t4 - t3).count();
-	printf("\nTime needed for pileCre: %d microseconds ", durationPile);
+
 	printf("\nTime needed for merging: %d microseconds ", durationMerge);
 }
 
-int patsortplus(long long values[], int const length) {
+int patsortplus(long long values[], int length) {
 	patience_sort_plus(values, values + length, length);
 	return 0;
 }
