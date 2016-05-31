@@ -26,16 +26,19 @@ int insertArray(long long elemArray[], long long pile[], int runSize, int nextEm
 	}
 	return 0;
 }
-
-int UPingPongMerge(long long runs[], int runSize[], const length)
+// where first = runs[] and last = runs[] + sizeof(runs[])/sizeof(runs[0]) this only works when all runs are equally sized............... otherwise the number of runs needs to be stored seperately and passed
+int UPingPongMerge(Iterator first, int numberOfRuns, int runSize[], const length)
 {
+	Iterator last;
+	last = first + numberOfRuns;
 	//initialize array with number of integers
 	long long elems1[length];
 	long long elems2[length];
 	vector<pair<int, int>> runSizeRef;
 	//fill array with index and sizes
 	for(Iterator it = first; it != last; it++){
-		runSizeRef.push_back(make_pair( it, runSize[it]));
+		long long& element = *it;
+		runSizeRef.push_back(make_pair( element, runSize[it]));
 	}
 
 	//sort array ascending sizes
@@ -45,10 +48,11 @@ int UPingPongMerge(long long runs[], int runSize[], const length)
 	
 	//still wrong insertarray and elemsrun
 	vector<tuple<int,int,int>> elemsRun;
-	for(int j = {0}; j < runSizeRef.size(); j++){
-		insertArray(elems1, runs[j], runSize[j], nextEmptyArrayLoc);
+	// opmerking van Dylan: in C++ moet je sizeof gebruiken en dan krijg je byte size van de array, vervolgens wil je dit
+	// delen door de size van een element in de array verder wil je wel de elements zelf in elems1 knallen
+	for(int j = {0}; j < sizeof(runSizeRef)/sizeof(runSizeRef[0]); j++){
+		copy(runs[j], runs[j] + runSize[j], elems1[nextEmptyArrayLoc]);
 		elemsRun.push_back(make_tuple(1,nextEmptyArrayLoc,runSize[j]));
-		//also worong
 		nextEmptyArrayLoc += runSize[j];
 	}
 	
@@ -77,6 +81,7 @@ int UPingPongMerge(long long runs[], int runSize[], const length)
 		//26 if (ElemsRuns.First.RunIndex == 1) return Elems1
 		//27 else return Elems2
 	}
+
 	
 
 //16 if (curRun has no next) or
