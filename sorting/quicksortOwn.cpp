@@ -1,4 +1,4 @@
-int quickSort(long long values[], int left, int right) {
+int quickSortOwn(long long values[], int left, int right) {
 	int i = left, j = right;
 	int tmp;
 	int pivot = values[(left + right) / 2];
@@ -20,8 +20,8 @@ int quickSort(long long values[], int left, int right) {
 
 	/* recursion */
 	if (left < j)
-		quickSort(values, left, j);
+		quickSortOwn(values, left, j);
 	if (i < right)
-		quickSort(values, i, right);
+		quickSortOwn(values, i, right);
 	return 0;
 }

@@ -21,11 +21,8 @@
   <ItemGroup>
     <ClCompile Include="patience.cpp" />
     <ClCompile Include="patienceplus.cpp" />
-<<<<<<< HEAD
-    <ClCompile Include="Quicksort.cpp" />
-=======
-    <ClCompile Include="qsort.cpp" />
->>>>>>> origin/master
+    <ClCompile Include="qsortGNU.cpp" />
+    <ClCompile Include="quicksortOwn.cpp" />
     <ClCompile Include="sorting.cpp" />
   </ItemGroup>
   <ItemGroup>
