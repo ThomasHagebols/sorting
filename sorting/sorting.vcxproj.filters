@@ -24,7 +24,11 @@
     <ClCompile Include="patienceplus.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+<<<<<<< HEAD
+    <ClCompile Include="Quicksort.cpp">
+=======
     <ClCompile Include="qsort.cpp">
+>>>>>>> origin/master
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
