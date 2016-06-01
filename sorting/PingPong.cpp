@@ -1,120 +1,184 @@
 #include <iostream>
 #include <vector>
 #include <stack>
+#include <list>
 #include <iterator>
 #include <algorithm>
 #include <cassert>
 #include <chrono>
 #include <ctime>
 #include <cstdlib>
-#include <tuple> 
- 
-using namespace std::chrono;
+#include <tuple>
+
+//using namespace std::chrono;
 using namespace std;
 
-int UPingPongMerge(long long runs[], int runSize[]);
+int UPingPongMerge(vector<list<long long>> runs, int runSize[]);
 
 //to do: veranderen int naar Pile voor accepteren van runs
 
 bool pairCompare(const pair<int, int> &firstElem, const pair<int, int> &secondElem) {
-  return firstElem.second < secondElem.second;
+	return firstElem.second < secondElem.second;
 }
 
-int insertArray(long long elemArray[], long long pile[], int runSize, int nextEmptyArrayLoc) {
-	for (int i = {nextEmptyArrayLoc}; i < runSize ; i++) {
-		elemArray[i] = pile[i];
+int insertArray(long long elemArray[], list<long long> pile, int runSize, int nextEmptyArrayLoc) {
+	for (int i = { nextEmptyArrayLoc }; i < nextEmptyArrayLoc + runSize; i++) {
+		elemArray[i] = pile.front();
+		pile.pop_front();
 	}
 	return 0;
 }
-
-int UPingPongMerge(long long runs[], int runSize[], const length)
+int UPingPongMerge(vector<list<long long>> runs, int runSize[])
 {
 	//initialize array with number of integers
+	const int length = 36;
 	long long elems1[length];
 	long long elems2[length];
 	vector<pair<int, int>> runSizeRef;
 	//fill array with index and sizes
-	for(Iterator it = first; it != last; it++){
-		runSizeRef.push_back(make_pair( it, runSize[it]));
+		for (int i = { 0 }; i != runs.size(); i++) {
+		runSizeRef.push_back(make_pair(i, runSize[i]));
 	}
 
 	//sort array ascending sizes
 	sort(runSizeRef.begin(), runSizeRef.end(), pairCompare);
 
-	int nextEmptyArrayLoc = {0};
-	
-	//still wrong insertarray and elemsrun
-	vector<tuple<int,int,int>> elemsRun;
-	for(int j = {0}; j < runSizeRef.size(); j++){
-		insertArray(elems1, runs[j], runSize[j], nextEmptyArrayLoc);
-		elemsRun.push_back(make_tuple(1,nextEmptyArrayLoc,runSize[j]));
-		//also worong
-		nextEmptyArrayLoc += runSize[j];
+	int nextEmptyArrayLoc = { 0 };
+
+	vector<tuple<int, int, int>> elemsRun;
+
+	for (int j = { 0 }; j < runSizeRef.size(); j++) {
+		//copy(runs[runSizeRef[j].first], runs[runSizeRef[j].first].size(), elems1[nextEmptyArrayLoc]);
+		insertArray(elems1, runs[runSizeRef[j].first], runSizeRef[j].second, nextEmptyArrayLoc);
+		elemsRun.push_back(make_tuple(1, nextEmptyArrayLoc, runSizeRef[j].second));
+		nextEmptyArrayLoc += runSizeRef[j].second;
 	}
-	
+
 	tuple<int, int, int> curRun = elemsRun.front();
-	int index = {0};
-	while (elemsRun.size() > 1) {
-		if (curRun || (get<2>(curRun) + get<2>()) > (get<2>(elemsRun.front()) + get<2>(elemsRun[1]))) {
-			curRun = *elemsRun.front();
+	int index = { 0 };
+	while (elemsRun.size() >= 2) {
+		if (index == (elemsRun.size() -1) || (get<2>(curRun) + get<2>(elemsRun[index +1])) > (get<2>(elemsRun.front()) + get<2>(elemsRun[1]))) {
+			curRun = elemsRun.front();
 			index = 0;
 		}
 		if (get<0>(curRun) == 1) {
-			//18 Blindly merge curRun and curRun’s next into Elems2
-			//starting at element position curRun.ElemIndex
-			get<0>(curRun) = 2;
-		} else {
-			//21 Blindly merge curRun and curRun’s next into Elems1
-			//starting at element position curRun.ElemIndex
-			get<0>(curRun) = 1;
+			if (get<0>(elemsRun[index + 1]) == 1) {
+				merge(&elems1[get<1>(curRun)], &elems1[get<1>(curRun)] + get<2>(curRun),
+					&elems1[get<1>(elemsRun[index + 1])], &elems1[get<1>(elemsRun[index + 1])] + get<2>(elemsRun[index + 1]),
+					&elems2[get<1>(curRun)]);
+			}
+			else {
+				merge(&elems1[get<1>(curRun)], &elems1[get<1>(curRun)] + get<2>(curRun),
+					&elems2[get<1>(elemsRun[index + 1])], &elems2[get<1>(elemsRun[index + 1])] + get<2>(elemsRun[index + 1]),
+					&elems2[get<1>(curRun)]);
+			}
+			get<0>(elemsRun[index]) = 2;
 		}
-		get<2>(curRun) += get<2>(curRun);//add length next item
+		else {
+			if (get<0>(elemsRun[index + 1]) == 1) {
+				merge(&elems2[get<1>(curRun)], &elems2[get<1>(curRun)] + get<2>(curRun),
+					&elems1[get<1>(elemsRun[index + 1])], &elems1[get<1>(elemsRun[index + 1])] + get<2>(elemsRun[index + 1]),
+					&elems1[get<1>(curRun)]);
+			}	else {
+				merge(&elems2[get<1>(curRun)], &elems2[get<1>(curRun)] + get<2>(curRun),
+					&elems2[get<1>(elemsRun[index + 1])], &elems2[get<1>(elemsRun[index + 1])] + get<2>(elemsRun[index + 1]),
+					&elems1[get<1>(curRun)]);
+			}
+			get<0>(elemsRun[index]) = 1;
+		}
+		get<2>(elemsRun[index]) += get<2>(elemsRun[index + 1]);
+		elemsRun.erase(elemsRun.begin() + index +1);
 		index++;
-		curRun.erase();
-
-		//24 remove curRun’s next
-		//25 curRun.MoveForward
-		//26 if (ElemsRuns.First.RunIndex == 1) return Elems1
-		//27 else return Elems2
+		if (elemsRun.size() > 1) {
+			curRun = elemsRun[index];
+		}
 	}
-	
-
-//16 if (curRun has no next) or
-//(size of merging curRun and its next >
-//size of merging the first and second runs)
-//CurRun = ElemsRuns.IterateFromFirst
-//17 if (curRun.ElemsArr == 1)
-//18 Blindly merge curRun and curRun’s next into Elems2
-//starting at element position curRun.ElemIndex
-//19 curRun.ElemArr = 2
-//20 else
-//21 Blindly merge curRun and curRun’s next into Elems1
-//starting at element position curRun.ElemIndex
-//22 curRun.ElemArr = 1
-//23 curRun.RunSize += curRun.Next.RunSize
-//24 remove curRun’s next
-//25 curRun.MoveForward
-//26 if (ElemsRuns.First.RunIndex == 1) return Elems1
-//27 else return Elems2
-
-
+	long long result[length];
+	if (get<0>(elemsRun[0]) == 1) {
+		copy(elems1, elems1 + length, result);
+	} else {
+		copy(elems2, elems2 + length, result);
+	}
+	return 0;
 }
-// 
-//int main() {
-//  long long unsorted[50000];
-//  int length = sizeof(unsorted)/sizeof(long long);
-//  std::srand(std::time(0));
-//  int n;
-//
-//  for(n=0; n < length; n++)
-//  {
-//	  unsorted[n] = std::rand();
-//  }
-//  high_resolution_clock::time_point total1 = high_resolution_clock::now();
-//  UPingPongMerge(unsorted, unsorted + length);
-//  high_resolution_clock::time_point total2 = high_resolution_clock::now();
-//  auto duration = duration_cast<microseconds>(total2-total1).count();
-//  printf("\nTime needed for Total sorting: %d microseconds ", duration);
 
-//  return 0;
-//}
+	int main()
+	{
+		vector<list<long long>> runs;
+		list<long long> run1;
+		list<long long> run2;
+		list<long long> run3;
+		list<long long> run4;
+		list<long long> run5;
+		list<long long> run6;
+		list<long long> run7;
+		list<long long> run8;
+
+		run1.emplace_front(15);
+		run1.emplace_front(9);
+		run1.emplace_front(6);
+		run1.emplace_front(5);
+		run1.emplace_front(1);
+
+		run2.emplace_front(11);
+		run2.emplace_front(10);
+		run2.emplace_front(7);
+		run2.emplace_front(2);
+
+		run3.emplace_front(29);
+		run3.emplace_front(15);
+		run3.emplace_front(9);
+		run3.emplace_front(3);
+
+		run4.emplace_front(17);
+		run4.emplace_front(12);
+		run4.emplace_front(8);
+
+		run5.emplace_front(13);
+		run5.emplace_front(11);
+		run5.emplace_front(7);
+		run5.emplace_front(1);
+
+		run6.emplace_front(20);
+		run6.emplace_front(14);
+		run6.emplace_front(10);
+		run6.emplace_front(9);
+		run6.emplace_front(3);
+		run6.emplace_front(1);
+
+		run7.emplace_front(11);
+		run7.emplace_front(10);
+
+		run8.emplace_front(17);
+		run8.emplace_front(14);
+		run8.emplace_front(13);
+		run8.emplace_front(10);
+		run8.emplace_front(10);
+		run8.emplace_front(10);
+		run8.emplace_front(9);
+		run8.emplace_front(8);
+
+		runs.push_back(run1);
+		runs.push_back(run2);
+		runs.push_back(run3);
+		runs.push_back(run4);
+		runs.push_back(run5);
+		runs.push_back(run6);
+		runs.push_back(run7);
+		runs.push_back(run8);
+
+		int runSizes[8];
+
+		runSizes[0] = run1.size();
+		runSizes[1] = run2.size();
+		runSizes[2] = run3.size();
+		runSizes[3] = run4.size();
+		runSizes[4] = run5.size();
+		runSizes[5] = run6.size();
+		runSizes[6] = run7.size();
+		runSizes[7] = run8.size();
+		
+		UPingPongMerge(runs, runSizes);
+
+		return 0;
+	}
