@@ -15,7 +15,7 @@ using namespace std::chrono;
 
 using namespace std;
 
-int UPingPongMerge(vector<list<long long>> runs, int runSize[], const int * length);
+int UPingPongMerge(vector<list<long long>> runs, vector<int> runSize, int const length);
 
 
 template<class E>
@@ -41,7 +41,7 @@ struct run_end_greater {
 	};
 
 template<class Iterator>
-void patience_sort_plus(Iterator first, Iterator last, const int * length) {
+void patience_sort_plus(Iterator first, Iterator last, int const length) {
 	typedef typename std::iterator_traits<Iterator>::value_type E;
 	typedef std::list<E> Run;
 
@@ -76,17 +76,12 @@ void patience_sort_plus(Iterator first, Iterator last, const int * length) {
 	high_resolution_clock::time_point t2 = high_resolution_clock::now();
 
 	int nrRuns = runs.size();
-	int * runSizes;
-	runSizes = new int[nrRuns];
+	vector<int> runSizes;
 	for (int j = { 0 }; j < runs.size(); j++) {
-		runSizes[j] = runs[j].size();
+		runSizes.push_back(runs[j].size());
 	}
 
-
 	UPingPongMerge(runs, runSizes, length);
-
-	delete [] runSizes;
-	runSizes = NULL;
 
 
 	// priority queue allows us to merge runs efficiently
@@ -115,7 +110,7 @@ void patience_sort_plus(Iterator first, Iterator last, const int * length) {
 	//printf("\nTime needed for merging: %d microseconds ", durationMerge);
 }
 
-int patsortplus(long long values[], const int length) {
+int patsortplus(long long values[], int const length) {
 	patience_sort_plus(values, values + length, length);
 	return 0;
 }

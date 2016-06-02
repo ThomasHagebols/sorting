@@ -18,7 +18,7 @@ using namespace std::chrono;
 //gnuqsort(char *base_ptr, int total_elems, int size, int(*cmp)());
 
 // Initialize parameters
-const int length = 5000;
+int const length = 5000;
 int const disorder = 10;
 float const percentage = 0.10;
 bool const timeSeed = false;
@@ -29,8 +29,8 @@ long long UnsortedSemi[length];
 long long unsortedIncreasing[length];
 long long valuesCopy[length];
 
-int patsort(long long values[], const int length);
-int patsortplus(long long values[], const int * length);
+int patsort(long long values[], int const length);
+int patsortplus(long long values[], int const length);
 //int UPingPongMerge(vector<list<long long>> runs, vector<int> runSize);
 
 int compare_doubles(const void *a, const void *b)
@@ -55,8 +55,8 @@ int cmpfunc(const void * a, const void * b)
 
 int int_cmp(const void *a, const void *b)
 {
-	const int *ia = (const int *)a; // casting pointer types 
-	const int *ib = (const int *)b;
+	int const *ia = (int const *)a; // casting pointer types 
+	int const *ib = (int const *)b;
 	return *ia - *ib;
 	/* integer comparison: returns negative if b > a
 	and positive if a > b */
@@ -111,7 +111,7 @@ int genData()
 	return 0;
 }
 
-int doSorts(long long values[], const int length)
+int doSorts(long long values[], int const length)
 {
 	// Optional printing of the generated array before sorting
 	//printf("before sorting the list is: \n");
@@ -145,7 +145,7 @@ int doSorts(long long values[], const int length)
 		case 2:
 			//Patience+ sort
 			cout << "\n\nPatient+ sort:" << endl;
-			patsortplus(valuesCopy, &length);
+			patsortplus(valuesCopy, length);
 			break;
 		case 3:
 			//P3 sort
