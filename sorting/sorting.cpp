@@ -13,12 +13,8 @@
 using namespace std;
 using namespace std::chrono;
 
-
-// TODO Check if char is permitted in C++
-//gnuqsort(char *base_ptr, int total_elems, int size, int(*cmp)());
-
 // Initialize parameters
-const int length = 100;
+const int length = 1000;
 int const disorder = 10;
 float const percentage = 0.10;
 bool const timeSeed = false;
@@ -32,7 +28,6 @@ long long valuesCopy[length];
 int patsort(long long values[], const int length);
 int patsortplus(long long values[], const int length);
 int pThreeSort(long long values[], const int length);
-//int UPingPongMerge(vector<list<long long>> runs, vector<int> runSize);
 
 int compare_doubles(const void *a, const void *b)
 {
@@ -136,6 +131,7 @@ int doSorts(long long values[], const int length)
 			//qsort
 			cout << "\nqsort:" << endl;
 			qsort(valuesCopy, length, sizeof(long long), cmpfunc);
+			//TODO fix GNU quicksort
 			/*_quicksort(copyUnsortedRandom, length, sizeof(long long), compare_doubles);*/
 			break;
 		case 1:

@@ -61,6 +61,7 @@ int UPingPongMerge(vector<list<long long>> runs, int runSize[], int const size)
 	tuple<int, int, int> curRun = elemsRun.front();
 	int index = { 0 };
 	while (elemsRun.size() >= 2) {
+		cout << elemsRun.size() << endl;
 		if (index == (elemsRun.size() -1) || (get<2>(curRun) + get<2>(elemsRun[index +1])) > (get<2>(elemsRun.front()) + get<2>(elemsRun[1]))) {
 			curRun = elemsRun.front();
 			index = 0;
