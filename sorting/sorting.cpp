@@ -18,7 +18,7 @@ using namespace std::chrono;
 //gnuqsort(char *base_ptr, int total_elems, int size, int(*cmp)());
 
 // Initialize parameters
-const int length = 5000;
+const int length = 100;
 int const disorder = 10;
 float const percentage = 0.10;
 bool const timeSeed = false;
@@ -30,7 +30,8 @@ long long unsortedIncreasing[length];
 long long valuesCopy[length];
 
 int patsort(long long values[], const int length);
-int patsortplus(long long values[], const int * length);
+int patsortplus(long long values[], const int length);
+int pThreeSort(long long values[], const int length);
 //int UPingPongMerge(vector<list<long long>> runs, vector<int> runSize);
 
 int compare_doubles(const void *a, const void *b)
@@ -121,7 +122,7 @@ int doSorts(long long values[], const int length)
 	//}
 
 	// Perform different sorting algorithms and time the runtime
-	for (int i{ 0 }; i < 3; i++)
+	for (int i{ 0 }; i < 4; i++)
 	{
 		std::copy(values, values + length, valuesCopy);
 
@@ -145,12 +146,13 @@ int doSorts(long long values[], const int length)
 		case 2:
 			//Patience+ sort
 			cout << "\n\nPatient+ sort:" << endl;
-			patsortplus(valuesCopy, &length);
+			patsortplus(values, length);
+			//patsortplus(valuesCopy, length);
 			break;
 		case 3:
 			//P3 sort
 			cout << "\n\nP3 sort:" << endl;
-
+			pThreeSort(values, length);
 			break;
 		case 4:
 			//TimSort

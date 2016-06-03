@@ -16,6 +16,8 @@ using namespace std;
 
 int UPingPongMerge(vector<list<long long>> runs, int runSize[], int const length);
 
+int const length = 1000;
+
 //to do: veranderen int naar Pile voor accepteren van runs
 
 bool pairCompare(const pair<int, int> &firstElem, const pair<int, int> &secondElem) {
@@ -29,12 +31,13 @@ int insertArray(long long elemArray[], list<long long> pile, int runSize, int ne
 	}
 	return 0;
 }
-int UPingPongMerge(vector<list<long long>> runs, int runSize[], int const length)
+int UPingPongMerge(vector<list<long long>> runs, int runSize[], int const size)
 {
 	//initialize array with number of integers
 	//const int length = 36;
     long long elems1[length];
 	long long elems2[length];
+	long long result[length];
 	vector<pair<int, int>> runSizeRef;
 	//fill array with index and sizes
 		for (int i = { 0 }; i != runs.size(); i++) {

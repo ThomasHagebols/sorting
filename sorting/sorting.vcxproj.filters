@@ -30,6 +30,9 @@
     <ClCompile Include="qsortGNU.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="p3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="PingPong.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
