@@ -14,20 +14,21 @@ using namespace std;
 using namespace std::chrono;
 
 // Initialize parameters
-const int length = 1000;
+const int length = 10000;
 int const disorder = 10;
 float const percentage = 0.10;
 bool const timeSeed = false;
 
 // Initialize the arrays which need to be sorted
-long long unsortedRandom[length];
-long long UnsortedSemi[length];
-long long unsortedIncreasing[length];
-long long valuesCopy[length];
+long long unsortedRandom[length] = {};
+long long UnsortedSemi[length] = {};
+long long unsortedIncreasing[length] = {};
+long long valuesCopy[length] = {};
+long long pingPongSwap[length] = {};
 
 int patsort(long long values[], const int length);
 int patsortplus(long long values[], const int length);
-int pThreeSort(long long values[], const int length);
+int pThreeSort(long long values[], long long pingPongSwap[], const int length);
 
 int compare_doubles(const void *a, const void *b)
 {
@@ -44,6 +45,8 @@ int compare_doubles(const void *a, const void *b)
 //typedef int(*__compar_d_fn_t) (const void *, const void *);
 //void _quicksort(void *const pbase, size_t total_elems, size_t size, __compar_d_fn_t cmp);
 
+
+//TODO cmp cleanen
 int cmpfunc(const void * a, const void * b)
 {
 	return (*(long long*)a - *(long long*)b);
@@ -142,13 +145,12 @@ int doSorts(long long values[], const int length)
 		case 2:
 			//Patience+ sort
 			cout << "\n\nPatient+ sort:" << endl;
-			patsortplus(values, length);
-			//patsortplus(valuesCopy, length);
+			patsortplus(valuesCopy, length);
 			break;
 		case 3:
 			//P3 sort
 			cout << "\n\nP3 sort:" << endl;
-			pThreeSort(values, length);
+			pThreeSort(valuesCopy, pingPongSwap, length);
 			break;
 		case 4:
 			//TimSort

@@ -3,62 +3,65 @@ TODO take a look at https://en.wikibooks.org/wiki/Algorithm_Implementation/Sorti
 
 #include <vector>
 #include <algorithm>
-#include <stack>
+#include <list>
 #include <iterator>
 
 // Needed for timer
 #include <iostream>
 #include <ctime>
 #include <chrono>
+
+using namespace std;
 using namespace std::chrono;
 
-template<typename PileType>
-bool pile_less(const PileType& x, const PileType& y)
+template<typename RunType>
+inline bool run_greater(const RunType& x, const RunType& y)
 {
-	return x.top() < y.top();
+	return x.front() > y.front();
 }
 
 // reverse less predicate to turn max-heap into min-heap
-template<typename PileType>
-bool pile_more(const PileType& x, const PileType& y)
+template<typename RunType>
+inline bool run_less(const RunType& x, const RunType& y)
 {
-	return pile_less(y, x);
+	return run_greater(y, x);
 }
 
 template<typename Iterator>
-void patience_sort(Iterator begin, Iterator end)
+int patience_sort(Iterator begin, Iterator end)
 {
 	typedef typename std::iterator_traits<Iterator>::value_type DataType;
-	typedef std::stack<DataType> PileType;
-	std::vector<PileType> piles;
+	typedef std::list<DataType> RunType;
 
+	std::vector<RunType> runs;
 
 	high_resolution_clock::time_point t1 = high_resolution_clock::now();
 	for (Iterator it = begin; it != end; it++)
 	{
-		PileType new_pile;
-		new_pile.push(*it);
-		typename std::vector<PileType>::iterator insert_it =
-			std::lower_bound(piles.begin(), piles.end(), new_pile,
-				pile_less<PileType>);
-		if (insert_it == piles.end())
-			piles.push_back(new_pile);
+		RunType newRun;
+		newRun.emplace_front(*it);
+		typename std::vector<RunType>::iterator insert_it =
+			std::lower_bound(runs.begin(), runs.end(), newRun,
+				run_greater<RunType>);
+		if (insert_it == runs.end())
+			runs.push_back(newRun);
 		else
-			insert_it->push(*it);
+			insert_it->emplace_front(*it);
 	}
 	high_resolution_clock::time_point t2 = high_resolution_clock::now();
 
 	// sorted array already satisfies heap property for min-heap
+	// TODO reverse sort order
 	high_resolution_clock::time_point t3 = high_resolution_clock::now();
 	for (Iterator it = begin; it != end; it++)
 	{
-		std::pop_heap(piles.begin(), piles.end(), pile_more<PileType>);
-		*it = piles.back().top();
-		piles.back().pop();
-		if (piles.back().empty())
-			piles.pop_back();
+		std::pop_heap(runs.begin(), runs.end(), run_less<RunType>);
+		*it = runs.back().front();
+		runs.back().pop_front();
+		if (runs.back().empty())
+			runs.pop_back();
 		else
-			std::push_heap(piles.begin(), piles.end(), pile_more<PileType>);
+			std::push_heap(runs.begin(), runs.end(), run_less<RunType>);
 	}
 	high_resolution_clock::time_point t4 = high_resolution_clock::now();
 
@@ -67,6 +70,8 @@ void patience_sort(Iterator begin, Iterator end)
 	auto durationMerge = duration_cast<microseconds>(t4 - t3).count();
 	printf("\nTime needed for pileCre: %d microseconds ", durationPile);
 	printf("\nTime needed for merging: %d microseconds ", durationMerge);
+
+	return 0;
 }
 
 int patsort(long long values[], int const length) {

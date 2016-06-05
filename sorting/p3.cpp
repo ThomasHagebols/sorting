@@ -27,7 +27,7 @@ struct run_less {
 template<class E>
 struct run_end_greater {
 	bool operator()(const std::list<E> &list1, const std::list<E> &list2) const {
-		return list1.back() < list2.back();
+		return list1.back() > list2.back();
 	}
 };
 
@@ -97,7 +97,7 @@ void pThree_Sort(Iterator first, Iterator last, int const length) {
 	printf("\nTime needed for merging: %d microseconds ", durationMerge);
 }
 
-int pThreeSort(long long values[], const int length) {
+int pThreeSort(long long values[], long long pingPongSwap[], const int length) {
 	pThree_Sort(values, values + length, length);
 	return 0;
 }

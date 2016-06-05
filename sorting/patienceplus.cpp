@@ -1,5 +1,4 @@
 #include <vector>
-#include <stack>
 #include <list>
 #include <iterator>
 #include <algorithm>
@@ -11,9 +10,10 @@
 #include <iostream>
 #include <ctime>
 #include <chrono>
-using namespace std::chrono;
 
 using namespace std;
+using namespace std::chrono;
+
 
 template<class E>
 struct run_less {
@@ -30,12 +30,12 @@ struct run_end_greater {
 };
 
 
-	template<class E>
-	struct run_greater {
-		bool operator()(const std::list<E> &list1, const std::list<E> &list2) const {
-			return list1.front() > list2.front();
-		}
-	};
+template<class E>
+struct run_greater {
+	bool operator()(const std::list<E> &list1, const std::list<E> &list2) const {
+		return list1.front() > list2.front();
+	}
+};
 
 template<class Iterator>
 void patience_sort_plus(Iterator first, Iterator last, const int length) {

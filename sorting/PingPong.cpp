@@ -14,9 +14,9 @@
 //using namespace std::chrono;
 using namespace std;
 
-int UPingPongMerge(vector<list<long long>> runs, int runSize[], int const length);
+const int length = 1000;
 
-int const length = 1000;
+int UPingPongMerge(vector<list<long long>> runs, int runSize[], int const length);
 
 //to do: veranderen int naar Pile voor accepteren van runs
 
@@ -35,12 +35,18 @@ int UPingPongMerge(vector<list<long long>> runs, int runSize[], int const size)
 {
 	//initialize array with number of integers
 	//const int length = 36;
-    long long elems1[length];
-	long long elems2[length];
-	long long result[length];
+	long long * elems1;
+	elems1 = new long long[size] {};
+	long long * elems2;
+	elems2 = new long long[size] {};
+	long long * result;
+	result = new long long[size] {};
+    //long long elems1[length];
+	//long long elems2[length];
+	//long long result[length];
 	vector<pair<int, int>> runSizeRef;
 	//fill array with index and sizes
-		for (int i = { 0 }; i != runs.size(); i++) {
+	for (int i = { 0 }; i != runs.size(); i++) {
 		runSizeRef.push_back(make_pair(i, runSize[i]));
 	}
 
@@ -59,10 +65,9 @@ int UPingPongMerge(vector<list<long long>> runs, int runSize[], int const size)
 	}
 
 	tuple<int, int, int> curRun = elemsRun.front();
-	int index = { 0 };
+	int index = {};
 	while (elemsRun.size() >= 2) {
-		cout << elemsRun.size() << endl;
-		if (index == (elemsRun.size() -1) || (get<2>(curRun) + get<2>(elemsRun[index +1])) > (get<2>(elemsRun.front()) + get<2>(elemsRun[1]))) {
+		if (index >= (elemsRun.size() -1) || (get<2>(curRun) + get<2>(elemsRun[index +1])) > (get<2>(elemsRun.front()) + get<2>(elemsRun[1]))) {
 			curRun = elemsRun.front();
 			index = 0;
 		}
@@ -94,16 +99,26 @@ int UPingPongMerge(vector<list<long long>> runs, int runSize[], int const size)
 		get<2>(elemsRun[index]) += get<2>(elemsRun[index + 1]);
 		elemsRun.erase(elemsRun.begin() + index +1);
 		index++;
-		if (elemsRun.size() > 1) {
+		if (index < elemsRun.size()) {
 			curRun = elemsRun[index];
 		}
 	}
-	long long results[length];
 	if (get<0>(elemsRun[0]) == 1) {
 		copy(elems1, elems1 + length, result);
 	} else {
 		copy(elems2, elems2 + length, result);
 	}
+
+	//for (int i{ 0 }; i < length; i++) {
+	//	printf("%d ", result[i]);
+	//}
+
+	delete[] elems1;
+	elems1 = NULL;
+	delete[] elems2;
+	elems2 = NULL;
+	delete[] result;
+	result = NULL;
 	return 0;
 }
 
