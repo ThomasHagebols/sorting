@@ -14,7 +14,7 @@ using namespace std;
 using namespace std::chrono;
 
 // Initialize parameters
-const int length = 10000;
+const int length = 1000;
 int const disorder = 10;
 float const percentage = 0.10;
 bool const timeSeed = false;
@@ -54,7 +54,7 @@ int cmpfunc(const void * a, const void * b)
 
 int int_cmp(const void *a, const void *b)
 {
-	const int *ia = (const int *)a; // casting pointer types 
+	const int *ia = (const int *)a; // casting pointer types
 	const int *ib = (const int *)b;
 	return *ia - *ib;
 	/* integer comparison: returns negative if b > a
@@ -66,7 +66,7 @@ int addNoise(long long values[], int const size)
 	// Random number generator for noise
 	std::default_random_engine generator;
 	std::normal_distribution<double> distribution(0, disorder);
-	
+
 	for (int n{ 0 }; n < size; n++)
 	{
 		float v1 = ((double)rand() / (RAND_MAX));
@@ -168,11 +168,11 @@ int doSorts(long long values[], const int length)
 		printf("\nTime needed for sorting: %d microseconds \n", duration);
 
 		// Optional printing of the array after sorting
-		//printf("After sorting the list is: \n");
-		//for (int n{ 0 }; n < length; n++)
-		//{
-		//	printf("%d ", valuesCopy[n]);
-		//}
+		printf("After sorting the list is: \n");
+		for (int n{ 0 }; n < length; n++)
+		{
+			printf("%d ", valuesCopy[n]);
+		}
 	}
 	return 0;
 }

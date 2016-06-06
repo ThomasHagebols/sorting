@@ -1,3 +1,4 @@
+// TODO value 12 disappears...
 #include <vector>
 #include <stack>
 #include <list>
@@ -44,7 +45,7 @@ void pThree_Sort(Iterator first, Iterator last, int const length) {
 	typedef typename std::iterator_traits<Iterator>::value_type E;
 	typedef std::list<E> Run;
 
-	//Calculate the size 
+	//Calculate the size
 	//int memSize{ (int) sqrt(length) };
 
 	std::vector<Run> runs;
@@ -112,7 +113,7 @@ int pThreeSort(long long values[], long long pingPongSwap[], const int length) {
 //
 //	int run_sizes[32] = {};
 
-	//SQRT_ELEMS =  
+	//SQRT_ELEMS =
 	//runs = (char*) malloc(SQRT_ELEMS * )
 	//// Initializa random number generator seed (time) and n
 	//std::srand(std::time(0));

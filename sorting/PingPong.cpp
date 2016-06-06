@@ -14,9 +14,9 @@
 //using namespace std::chrono;
 using namespace std;
 
-const int length = 1000;
-
-int UPingPongMerge(vector<list<long long>> runs, int runSize[], int const length);
+//const int length = 1000;
+//
+//int UPingPongMerge(vector<list<long long>> runs, int runSize[], int const length);
 
 //to do: veranderen int naar Pile voor accepteren van runs
 
@@ -31,16 +31,16 @@ int insertArray(long long elemArray[], list<long long> pile, int runSize, int ne
 	}
 	return 0;
 }
-int UPingPongMerge(vector<list<long long>> runs, int runSize[], int const size)
+int UPingPongMerge(vector<list<long long>> runs, int runSize[], int const length)
 {
 	//initialize array with number of integers
 	//const int length = 36;
 	long long * elems1;
-	elems1 = new long long[size] {};
+	elems1 = new long long[length] {};
 	long long * elems2;
-	elems2 = new long long[size] {};
+	elems2 = new long long[length] {};
 	long long * result;
-	result = new long long[size] {};
+	result = new long long[length] {};
     //long long elems1[length];
 	//long long elems2[length];
 	//long long result[length];
