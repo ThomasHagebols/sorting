@@ -25,20 +25,11 @@ inline bool run_less(const Run& x, const Run& y)
 	return run_greater(y, x);
 }
 
-
 template<typename Run>
 inline bool run_end_greater(const Run& x, const Run& y)
 {
 	return x.back() > y.back();
 }
-
-//// TODO rewrite to nice new code
-//template<class RunType>
-//struct run_end_greater {
-//	bool operator()(const std::list<RunType> &list1, const std::list<RunType> &list2) const {
-//		return list1.back() < list2.back();
-//	}
-//};
 
 template<class Iterator>
 void patience_sort_plus(Iterator begin, Iterator end) {
@@ -100,37 +91,3 @@ int patsortplus(long long values[], const int length) {
 	patience_sort_plus(values, values + length);
 	return 0;
 }
-
-
-//int main() {
-//	// Preallocate memory for the head and tail pointers and values
-//	struct node *head_pointers[32] = {};
-//	long long head_values[32] = {};
-//
-//	struct tail_pointers[32] = {};
-//	long long tail_values[32] = {};
-//
-//	int run_sizes[32] = {};
-
-	
-
-
-	//SQRT_ELEMS =  
-	//runs = (char*) malloc(SQRT_ELEMS * )
-	//// Initializa random number generator seed (time) and n
-	//std::srand(std::time(0));
-	//int n;
-	//int i;
-
-	//// Fill array with random variables
-	//for (n = 0; n < length; n++)
-	//{
-	//	unsorted[n] = std::rand();
-	//}
-	//mem_size = (char*)malloc(sizeof(values) / sizeof(long long));
-
-
-	//patience_sort_plus(values, values + length);
-	//return 0;
-
-// No newline at end of file

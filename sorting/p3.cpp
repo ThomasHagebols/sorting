@@ -1,77 +1,68 @@
 // TODO value 12 disappears...
-#include <vector>
-#include <stack>
-#include <list>
-#include <iterator>
+
 #include <algorithm>
 #include <cassert>
-#include <malloc.h>
-#include <math.h>
+#include <iterator>
+#include <list>
+#include <vector>
 
 // Needed for timer
-#include <iostream>
-#include <ctime>
 #include <chrono>
-using namespace std::chrono;
+#include <ctime>
+#include <iostream>
 
 using namespace std;
+using namespace std::chrono;
 
 int UPingPongMerge(vector<list<long long>> runs, int runSize[], const int length);
 
-template<class E>
-struct run_less {
-	bool operator()(const std::list<E> &list1, const std::list<E> &list2) const {
-		return list1.front() < list2.front();
-	}
-};
+template<typename Run>
+inline bool run_greater(const Run& x, const Run& y)
+{
+	return x.front() > y.front();
+}
 
-template<class E>
-struct run_end_greater {
-	bool operator()(const std::list<E> &list1, const std::list<E> &list2) const {
-		return list1.back() > list2.back();
-	}
-};
+// reverse less predicate to turn min-heap into max-heap
+template<typename Run>
+inline bool run_less(const Run& x, const Run& y)
+{
+	return run_greater(y, x);
+}
 
-
-	template<class E>
-	struct run_greater {
-		bool operator()(const std::list<E> &list1, const std::list<E> &list2) const {
-			return list1.front() > list2.front();
-		}
-	};
+template<typename Run>
+inline bool run_end_greater(const Run& x, const Run& y)
+{
+	return x.back() > y.back();
+}
 
 template<class Iterator>
-void pThree_Sort(Iterator first, Iterator last, int const length) {
-	typedef typename std::iterator_traits<Iterator>::value_type E;
-	typedef std::list<E> Run;
-
-	//Calculate the size
-	//int memSize{ (int) sqrt(length) };
+void pThree_Sort(Iterator begin, Iterator end, int const length) {
+	typedef typename std::iterator_traits<Iterator>::value_type RunType;
+	typedef std::list<RunType> Run;
 
 	std::vector<Run> runs;
-	std::vector<long long> headsVal;
-	std::vector<long long> tailsVal;
-	std::vector<Run> * heads;
-	std::vector<Run> * tails;
+	//std::vector<long long> headsVal;
+	//std::vector<long long> tailsVal;
+	//std::vector<Run> * heads;
+	//std::vector<Run> * tails;
 
 	// sort into runs
 	high_resolution_clock::time_point t1 = high_resolution_clock::now();
-	for (Iterator it = first; it != last; it++) {
-		E& x = *it;
+	for (Iterator it = begin; it != end; it++) {
+		//Run& x = *it;
 		Run newRun;
-		newRun.emplace_front(x);
+		newRun.emplace_front(*it);
 		typename std::vector<Run>::iterator i =
-			std::lower_bound(runs.begin(), runs.end(), newRun, run_less<E>());
-		if (i != runs.end())
-			i->emplace_front(x);
-		else // This adds the append to back functionality but currently loops the inefficient way (from begin to end, rather than end to begin, which might in some situations be slightly slower even).
-		{
-			std::upper_bound(runs.begin(), runs.end(), newRun, run_end_greater<E>());
-		if (i != runs.end())
-			i->emplace_back(x);
-		else
-			runs.push_back(newRun);
+			std::lower_bound(runs.begin(), runs.end(), newRun, run_less<Run>);
+		if (i == runs.end()) {
+			i = std::upper_bound(runs.begin(), runs.end(), newRun, run_end_greater<Run>);
+			if (i == runs.end())
+				runs.push_back(newRun);
+			else
+				i->emplace_back(*it);
 		}
+		else
+			i->emplace_front(*it);
 	}
 	high_resolution_clock::time_point t2 = high_resolution_clock::now();
 

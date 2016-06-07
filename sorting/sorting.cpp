@@ -5,6 +5,8 @@
 #include "stdafx.h"
 #include <cstdlib>
 #include <iostream>
+#include <fstream>
+#include <string>
 #include <ctime>
 #include <chrono>
 #include <random>
@@ -14,15 +16,16 @@ using namespace std;
 using namespace std::chrono;
 
 // Initialize parameters
-const int length = 1000;
+const int length = 10000;
 int const disorder = 10;
 float const percentage = 0.10;
 bool const timeSeed = false;
 
 // Initialize the arrays which need to be sorted
-long long unsortedRandom[length] = {};
-long long UnsortedSemi[length] = {};
-long long unsortedIncreasing[length] = {};
+long long random[length] = {};
+//long long UnsortedSemi[length] = {};
+long long semiSorted[length] = {};
+long long reverseSemiSorted[length] = {};
 long long valuesCopy[length] = {};
 long long pingPongSwap[length] = {};
 
@@ -89,29 +92,39 @@ int genData()
 	// Fill array with random variables
 	for (int n{ 0 }; n < length; n++)
 	{
-		unsortedRandom[n] = std::rand();
+		random[n] = std::rand();
 	}
 
-	// Copy unsortedRandom and sort it to get a sorted list with some randomness
+	// Copy random and sort it to get a sorted list with some randomness
 	// in the interval between elements (multiple elements can be the same)
-	std::copy(unsortedRandom, unsortedRandom + length, UnsortedSemi);
-	qsort(UnsortedSemi, length, sizeof(long long), cmpfunc);
+	//std::copy(random, random + length, UnsortedSemi);
+	//qsort(UnsortedSemi, length, sizeof(long long), cmpfunc);
 
 	// Fill array with increasing elements
 	for (int n{ 0 }; n < length; n++)
 	{
-		unsortedIncreasing[n] = n;
+		semiSorted[n] = n;
+	}
+
+	// Fill array with decreasing elements
+	for (int n{ 0 }; n < length; n++)
+	{
+		reverseSemiSorted[n] = length - n;
 	}
 
 	// add noise
-	addNoise(unsortedRandom, length);
-	addNoise(unsortedIncreasing, length);
+	addNoise(semiSorted, length);
+	addNoise(reverseSemiSorted, length);
 
 	return 0;
 }
 
 int doSorts(long long values[], const int length)
 {
+	// Initialize log file
+	ofstream logfile;
+	logfile.open("logfile" + std::to_string(length) + ".csv");
+
 	// Optional printing of the generated array before sorting
 	//printf("before sorting the list is: \n");
 	//for (int n{0}; n < length; n++)
@@ -129,13 +142,15 @@ int doSorts(long long values[], const int length)
 		{
 			// Error. Unreachable declaration.
 			cout << "\n\nError unreachable declaration in switch" << endl;
+			logfile << "Error unreachable declaration in switch" << endl;
 			break;
 		case 0:
 			//qsort
 			cout << "\nqsort:" << endl;
+			logfile << "qsort;";
 			qsort(valuesCopy, length, sizeof(long long), cmpfunc);
 			//TODO fix GNU quicksort
-			/*_quicksort(copyUnsortedRandom, length, sizeof(long long), compare_doubles);*/
+			/*_quicksort(copyrandom, length, sizeof(long long), compare_doubles);*/
 			break;
 		case 1:
 			//Patience sort
@@ -167,12 +182,14 @@ int doSorts(long long values[], const int length)
 		auto duration = duration_cast<microseconds>(t2 - t1).count();
 		printf("\nTime needed for sorting: %d microseconds \n", duration);
 
+		logfile.close();
+
 		// Optional printing of the array after sorting
-		printf("After sorting the list is: \n");
-		for (int n{ 0 }; n < length; n++)
-		{
-			printf("%d ", valuesCopy[n]);
-		}
+		//printf("After sorting the list is: \n");
+		//for (int n{ 0 }; n < length; n++)
+		//{
+		//	printf("%d ", valuesCopy[n]);
+		//}
 	}
 	return 0;
 }
@@ -184,11 +201,11 @@ int main()
 	printf("Using time as seed value: %s \n", timeSeed ? "true" : "false");
 
 	cout << "\n\n-----------------Random data-----------------" << endl;
-	doSorts(unsortedRandom, length);
-	cout << "\n\n-----------Random semi sorted data-----------" << endl;
-	doSorts(UnsortedSemi, length);
-	cout << "\n\n--------Semi increasing sorted data----------" << endl;
-	doSorts(unsortedIncreasing, length);
+	doSorts(random, length);
+	cout << "\n\n-------- Increasing semi sorted data---------" << endl;
+	doSorts(semiSorted, length);
+	cout << "\n\n--------Reverse semi sorted data----------" << endl;
+	doSorts(reverseSemiSorted, length);
 
     return 0;
 }
