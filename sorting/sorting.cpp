@@ -16,14 +16,18 @@ using namespace std;
 using namespace std::chrono;
 
 // Initialize parameters
-const int length = 10000;
+const int length = 1000;
+int alg[] = { 0, 2, 3 };
+bool inputDataPrint = false;
+bool outputDataPrint = false;
+bool const timeSeed = false;
 int const disorder = 10;
 float const percentage = 0.10;
-bool const timeSeed = false;
+
+
 
 // Initialize the arrays which need to be sorted
 long long random[length] = {};
-//long long UnsortedSemi[length] = {};
 long long semiSorted[length] = {};
 long long reverseSemiSorted[length] = {};
 long long valuesCopy[length] = {};
@@ -69,6 +73,11 @@ int addNoise(long long values[], int const size)
 	// Random number generator for noise
 	std::default_random_engine generator;
 	std::normal_distribution<double> distribution(0, disorder);
+	
+	if (timeSeed == true)
+		std::srand(std::time(0));
+	else
+		std::srand(1);
 
 	for (int n{ 0 }; n < size; n++)
 	{
@@ -95,11 +104,6 @@ int genData()
 		random[n] = std::rand();
 	}
 
-	// Copy random and sort it to get a sorted list with some randomness
-	// in the interval between elements (multiple elements can be the same)
-	//std::copy(random, random + length, UnsortedSemi);
-	//qsort(UnsortedSemi, length, sizeof(long long), cmpfunc);
-
 	// Fill array with increasing elements
 	for (int n{ 0 }; n < length; n++)
 	{
@@ -119,61 +123,79 @@ int genData()
 	return 0;
 }
 
-int doSorts(long long values[], const int length)
+int doSorts(long long values[], const string inputOrder, const int length)
 {
 	// Initialize log file
 	ofstream logfile;
-	logfile.open("logfile" + std::to_string(length) + ".csv");
+	logfile.open("logfile" + std::to_string(length) + ".csv", ofstream::app);
+
+	string algorithm = {};
+	high_resolution_clock::time_point t1;
 
 	// Optional printing of the generated array before sorting
-	//printf("before sorting the list is: \n");
-	//for (int n{0}; n < length; n++)
-	//{
-	//	printf("%d ", values[n]);
-	//}
+	if (inputDataPrint == true) {
+		printf("before sorting the list is: \n");
+		for (int n{ 0 }; n < length; n++)
+		{
+			printf("%d ", values[n]);
+		}
+	}
 
 	// Perform different sorting algorithms and time the runtime
-	for (int i{ 0 }; i < 4; i++)
+	for (int i : alg)
 	{
 		std::copy(values, values + length, valuesCopy);
 
-		high_resolution_clock::time_point t1 = high_resolution_clock::now();
 		switch (i)
 		{
 			// Error. Unreachable declaration.
+			t1 = high_resolution_clock::now();
 			cout << "\n\nError unreachable declaration in switch" << endl;
 			logfile << "Error unreachable declaration in switch" << endl;
+			algorithm = "ERROR";
 			break;
 		case 0:
 			//qsort
-			cout << "\nqsort:" << endl;
-			logfile << "qsort;";
+			algorithm = "qsort";
+			cout << "\n" + algorithm + ":" << endl;
+			t1 = high_resolution_clock::now();
 			qsort(valuesCopy, length, sizeof(long long), cmpfunc);
 			//TODO fix GNU quicksort
 			/*_quicksort(copyrandom, length, sizeof(long long), compare_doubles);*/
 			break;
 		case 1:
 			//Patience sort
-			cout << "\n\nPatience sort:" << endl;
+			algorithm = "PatSort";
+			cout << "\n" + algorithm + ":" << endl;
+			t1 = high_resolution_clock::now();
 			patsort(valuesCopy, length);
 			break;
 		case 2:
 			//Patience+ sort
-			cout << "\n\nPatient+ sort:" << endl;
+			algorithm = "PatPlus";
+			cout << "\n" + algorithm + ":" << endl;
+			t1 = high_resolution_clock::now();
 			patsortplus(valuesCopy, length);
 			break;
 		case 3:
 			//P3 sort
-			cout << "\n\nP3 sort:" << endl;
+			algorithm = "P3";
+			cout << "\n" + algorithm + ":" << endl;
+			t1 = high_resolution_clock::now();
 			pThreeSort(valuesCopy, pingPongSwap, length);
 			break;
 		case 4:
 			//TimSort
-			cout << "\n\nTimsort:" << endl;
+			algorithm = "TimSort";
+			cout << "\n" + algorithm + ":" << endl;
+			t1 = high_resolution_clock::now();
 			break;
 		default:
 			// i undefined
 			cout << "\n\nSwitch out of bound:" << endl;
+			logfile << "\n\"Switch out of bound\";" << endl;
+			algorithm = "ERROR";
+			t1 = high_resolution_clock::now();
 			break;
 		}
 		high_resolution_clock::time_point t2 = high_resolution_clock::now();
@@ -181,31 +203,41 @@ int doSorts(long long values[], const int length)
 		//Calculate and print execution time
 		auto duration = duration_cast<microseconds>(t2 - t1).count();
 		printf("\nTime needed for sorting: %d microseconds \n", duration);
-
-		logfile.close();
+		logfile << "\n"+ algorithm + ";" + to_string(length) + ";" + inputOrder + ";" + to_string(duration);
 
 		// Optional printing of the array after sorting
-		//printf("After sorting the list is: \n");
-		//for (int n{ 0 }; n < length; n++)
-		//{
-		//	printf("%d ", valuesCopy[n]);
-		//}
+		if (outputDataPrint == true) {
+			printf("after sorting the list is: \n");
+			for (int n{ 0 }; n < length; n++)
+			{
+				printf("%d ", valuesCopy[n]);
+			}
+		}
 	}
+
+	logfile.close();
+
 	return 0;
 }
 
 int main()
 {
+	// Clear old log file
+	ofstream logfile;
+	logfile.open("logfile" + std::to_string(length) + ".csv");
+	logfile << "Algorithm;input length;input type;Time (microseconds)";
+	logfile.close();
+
 	genData();
 	printf("Number of values to be sorted: %d \n", length);
 	printf("Using time as seed value: %s \n", timeSeed ? "true" : "false");
 
 	cout << "\n\n-----------------Random data-----------------" << endl;
-	doSorts(random, length);
+	doSorts(random, "Random",length);
 	cout << "\n\n-------- Increasing semi sorted data---------" << endl;
-	doSorts(semiSorted, length);
+	doSorts(semiSorted, "IncreasingSemiSorted",length);
 	cout << "\n\n--------Reverse semi sorted data----------" << endl;
-	doSorts(reverseSemiSorted, length);
+	doSorts(reverseSemiSorted, "reverseSemiSorted", length);
 
     return 0;
 }
