@@ -1,3 +1,4 @@
+#include <math.h>
 #include <algorithm>
 #include <cassert>
 #include <iterator>
@@ -10,7 +11,7 @@
 #include <iostream>
 
 using namespace std;
-using namespace std::chrono;
+using namespace chrono;
 
 template<typename Run>
 inline bool run_greater(const Run& x, const Run& y)
@@ -32,42 +33,57 @@ inline bool run_end_greater(const Run& x, const Run& y)
 }
 
 template<class Iterator>
-void patience_sort_plus(Iterator begin, Iterator end) {
-	typedef typename std::iterator_traits<Iterator>::value_type RunType;
-	typedef std::list<RunType> Run;
+void patience_sort_plus(Iterator begin, Iterator end, int const length) {
+	typedef typename iterator_traits<Iterator>::value_type RunType;
+	typedef list<RunType> Run;
 
-	std::vector<Run> runs;
-	//std::vector<long long> headsVal;
-	//std::vector<long long> tailsVal;
-	//std::vector<Run> * heads;
-	//std::vector<Run> * tails;
+	vector<Run> runs;
+
+	vector<long long> tailValues;
+	vector<long long> headValues;
+	//vector<Run> * tails;
 
 	// sort into runs
 	high_resolution_clock::time_point t1 = high_resolution_clock::now();
 	for (Iterator it = begin; it != end; it++) {
-		//Run& x = *it;
+		long long x = *it;
 		Run newRun;
 		newRun.emplace_front(*it);
-		typename std::vector<Run>::iterator i =
-			std::lower_bound(runs.begin(), runs.end(), newRun, run_less<Run>);
+		typename vector<Run>::iterator i =
+			lower_bound(runs.begin(), runs.end(), newRun, run_less<Run>);
 		if (i == runs.end()) {
-			i = std::upper_bound(runs.begin(), runs.end(), newRun, run_end_greater<Run>);
-			if (i == runs.end())
+			i = upper_bound(runs.begin(), runs.end(), newRun, run_end_greater<Run>);
+			if (i == runs.end()) {
 				runs.push_back(newRun);
-			else
+				headValues.push_back(x);
+				tailValues.push_back(x);
+			}
+			else {
 				i->emplace_back(*it);
+				int index = distance(runs.begin(), i);
+				tailValues[index] = x;
+			}
 		}
-		else
+		else {
 			i->emplace_front(*it);
+			int index = distance(runs.begin(), i);
+			headValues[index] = x;
+		}
 	}
+
+	for (int dummy = { 0 }; dummy < headValues.size(); dummy++) {
+		cout << headValues[dummy];
+		cout << " ";
+	}
+		
 	high_resolution_clock::time_point t2 = high_resolution_clock::now();
 
 	// priority queue allows us to merge runs efficiently
 	// we use greater-than comparator for min-heap
 	high_resolution_clock::time_point t3 = high_resolution_clock::now();
-	std::make_heap(runs.begin(), runs.end(), run_greater<Run>);
+	make_heap(runs.begin(), runs.end(), run_greater<Run>);
 	for (Iterator it = begin; it != end; it++) {
-		std::pop_heap(runs.begin(), runs.end(), run_greater<Run>);
+		pop_heap(runs.begin(), runs.end(), run_greater<Run>);
 		Run &smallPile = runs.back();
 		*it = smallPile.front();
 		smallPile.pop_front();
@@ -75,7 +91,7 @@ void patience_sort_plus(Iterator begin, Iterator end) {
 			runs.pop_back();
 		}
 		else {
-			std::push_heap(runs.begin(), runs.end(), run_greater<Run>);
+			push_heap(runs.begin(), runs.end(), run_greater<Run>);
 		}
 	}
 	assert(runs.empty());
@@ -88,6 +104,6 @@ void patience_sort_plus(Iterator begin, Iterator end) {
 }
 
 int patsortplus(long long values[], const int length) {
-	patience_sort_plus(values, values + length);
+	patience_sort_plus(values, values + length, length);
 	return 0;
 }

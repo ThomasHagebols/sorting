@@ -16,8 +16,8 @@ using namespace std;
 using namespace std::chrono;
 
 // Initialize parameters
-const int length = 1000;
-int alg[] = { 0, 2, 3 };
+const int length = 10000;
+int alg[] = { 2 };
 bool inputDataPrint = false;
 bool outputDataPrint = false;
 bool const timeSeed = false;
