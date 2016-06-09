@@ -16,53 +16,54 @@ using namespace std::chrono;
 
 int UPingPongMerge(vector<list<long long>> runs, int runSize[], const int length);
 
-template<typename Run>
-inline bool run_greater(const Run& x, const Run& y)
+inline bool run_greater(const long long& x, const long long& y)
 {
-	return x.front() > y.front();
+	return x > y;
 }
 
 // reverse less predicate to turn min-heap into max-heap
-template<typename Run>
-inline bool run_less(const Run& x, const Run& y)
+inline bool run_less(const long long& x, const long long& y)
 {
 	return run_greater(y, x);
 }
 
-template<typename Run>
-inline bool run_end_greater(const Run& x, const Run& y)
-{
-	return x.back() > y.back();
-}
-
 template<class Iterator>
 void pThree_Sort(Iterator begin, Iterator end, int const length) {
-	typedef typename std::iterator_traits<Iterator>::value_type RunType;
-	typedef std::list<RunType> Run;
+	typedef typename iterator_traits<Iterator>::value_type RunType;
+	typedef list<RunType> Run;
 
-	std::vector<Run> runs;
-	//std::vector<long long> headsVal;
-	//std::vector<long long> tailsVal;
-	//std::vector<Run> * heads;
-	//std::vector<Run> * tails;
+	vector<Run> runs;
+	vector<long long> tailValues;
+	vector<long long> headValues;
+	typename vector<long long>::iterator i;
+	//vector<Run> * tails;
 
 	// sort into runs
+	// TODO fix problem that piles are incorrectly built
 	high_resolution_clock::time_point t1 = high_resolution_clock::now();
 	for (Iterator it = begin; it != end; it++) {
-		//Run& x = *it;
-		Run newRun;
-		newRun.emplace_front(*it);
-		typename std::vector<Run>::iterator i =
-			std::lower_bound(runs.begin(), runs.end(), newRun, run_less<Run>);
-		if (i == runs.end()) {
-			i = std::upper_bound(runs.begin(), runs.end(), newRun, run_end_greater<Run>);
-			if (i == runs.end())
+		i = lower_bound(headValues.begin(), headValues.end(), *it, run_less);
+		if (i == headValues.end()) {
+			i = upper_bound(tailValues.begin(), tailValues.end(), *it, run_greater);
+			if (i == tailValues.end()) {
+				Run newRun;
+				newRun.emplace_front(*it);
+
 				runs.push_back(newRun);
-			else
-				i->emplace_back(*it);
+				headValues.push_back(*it);
+				tailValues.push_back(*it);
+			}
+			else {
+				int index = distance(tailValues.begin(), i);
+				runs[index].emplace_back(*it);
+				tailValues[index] = *it;
+			}
 		}
-		else
-			i->emplace_front(*it);
+		else {
+			int index = distance(headValues.begin(), i);
+			runs[index].emplace_front(*it);
+			headValues[index] = *it;
+		}
 	}
 	high_resolution_clock::time_point t2 = high_resolution_clock::now();
 

@@ -16,15 +16,13 @@ using namespace std;
 using namespace std::chrono;
 
 // Initialize parameters
-const int length = 10000;
-int alg[] = { 2 };
+const int length = 500000;
+int alg[] = { 0, 2, 3 };
 bool inputDataPrint = false;
 bool outputDataPrint = false;
 bool const timeSeed = false;
 int const disorder = 10;
 float const percentage = 0.10;
-
-
 
 // Initialize the arrays which need to be sorted
 long long random[length] = {};
