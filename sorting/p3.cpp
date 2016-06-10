@@ -16,15 +16,15 @@ using namespace std::chrono;
 
 int UPingPongMerge(vector<list<long long>> runs, int runSize[], const int length);
 
-inline bool run_greater(const long long& x, const long long& y)
+inline bool cmp_greater(const long long& x, const long long& y)
 {
 	return x > y;
 }
 
 // reverse less predicate to turn min-heap into max-heap
-inline bool run_less(const long long& x, const long long& y)
+inline bool cmp_less(const long long& x, const long long& y)
 {
-	return run_greater(y, x);
+	return x < y;
 }
 
 template<class Iterator>
@@ -42,9 +42,9 @@ void pThree_Sort(Iterator begin, Iterator end, int const length) {
 	// TODO fix problem that piles are incorrectly built
 	high_resolution_clock::time_point t1 = high_resolution_clock::now();
 	for (Iterator it = begin; it != end; it++) {
-		i = lower_bound(headValues.begin(), headValues.end(), *it, run_less);
+		i = lower_bound(headValues.begin(), headValues.end(), *it, cmp_less);
 		if (i == headValues.end()) {
-			i = upper_bound(tailValues.begin(), tailValues.end(), *it, run_greater);
+			i = upper_bound(tailValues.begin(), tailValues.end(), *it, cmp_greater);
 			if (i == tailValues.end()) {
 				Run newRun;
 				newRun.emplace_front(*it);

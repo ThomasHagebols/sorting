@@ -13,15 +13,21 @@
 using namespace std;
 using namespace chrono;
 
-inline bool run_greater(const long long& x, const long long& y)
+inline bool cmp_greater(const long long& x, const long long& y)
 {
 	return x > y;
 }
 
 // reverse less predicate to turn min-heap into max-heap
-inline bool run_less(const long long& x, const long long& y)
+inline bool cmp_less(const long long& x, const long long& y)
 {
-	return run_greater(y, x);
+	return x < y;
+}
+
+template<typename Run>
+inline bool run_greater(const Run& x, const Run& y)
+{
+	return x.front() < y.front();
 }
 
 template<class Iterator>
@@ -39,9 +45,9 @@ void patience_sort_plus(Iterator begin, Iterator end, int const length) {
 	// TODO fix problem that piles are incorrectly built
 	high_resolution_clock::time_point t1 = high_resolution_clock::now();
 	for (Iterator it = begin; it != end; it++) {
-		i = lower_bound(headValues.begin(), headValues.end(), *it, run_less);
+		i = lower_bound(headValues.begin(), headValues.end(), *it, cmp_less);
 		if (i == headValues.end()) {
-			i = upper_bound(tailValues.begin(), tailValues.end(), *it, run_greater);
+			i = upper_bound(tailValues.begin(), tailValues.end(), *it, cmp_greater);
 			if (i == tailValues.end()) {
 				Run newRun;
 				newRun.emplace_front(*it);
@@ -69,20 +75,20 @@ void patience_sort_plus(Iterator begin, Iterator end, int const length) {
 	// priority queue allows us to merge runs efficiently
 	// we use greater-than comparator for min-heap
 	high_resolution_clock::time_point t3 = high_resolution_clock::now();
-	//make_heap(runs.begin(), runs.end(), run_greater<Run>);
-	//for (Iterator it = begin; it != end; it++) {
-	//	pop_heap(runs.begin(), runs.end(), run_greater<Run>);
-	//	Run &smallPile = runs.back();
-	//	*it = smallPile.front();
-	//	smallPile.pop_front();
-	//	if (smallPile.empty()){
-	//		runs.pop_back();
-	//	}
-	//	else {
-	//		push_heap(runs.begin(), runs.end(), run_greater<Run>);
-	//	}
-	//}
-	//assert(runs.empty());
+	make_heap(runs.begin(), runs.end(), run_greater<Run>);
+	for (Iterator it = begin; it != end; it++) {
+		pop_heap(runs.begin(), runs.end(), run_greater<Run>);
+		Run &smallPile = runs.back();
+		*it = smallPile.front();
+		smallPile.pop_front();
+		if (smallPile.empty()){
+			runs.pop_back();
+		}
+		else {
+			push_heap(runs.begin(), runs.end(), run_greater<Run>);
+		}
+	}
+	assert(runs.empty());
 	high_resolution_clock::time_point t4 = high_resolution_clock::now();
 
 	auto durationPile = duration_cast<microseconds>(t2 - t1).count();

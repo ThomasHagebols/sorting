@@ -16,7 +16,7 @@ using namespace std;
 using namespace std::chrono;
 
 // Initialize parameters
-const int length = 500000;
+const int length = 100000;
 int alg[] = { 0, 2, 3 };
 bool inputDataPrint = false;
 bool outputDataPrint = false;
@@ -129,6 +129,8 @@ int doSorts(long long values[], const string inputOrder, const int length)
 
 	string algorithm = {};
 	high_resolution_clock::time_point t1;
+	long long duration = {};
+	long long durationQSort = {};
 
 	// Optional printing of the generated array before sorting
 	if (inputDataPrint == true) {
@@ -199,9 +201,20 @@ int doSorts(long long values[], const string inputOrder, const int length)
 		high_resolution_clock::time_point t2 = high_resolution_clock::now();
 
 		//Calculate and print execution time
-		auto duration = duration_cast<microseconds>(t2 - t1).count();
+		if (algorithm == "qsort") {
+			duration = duration_cast<microseconds>(t2 - t1).count();
+			durationQSort = duration_cast<microseconds>(t2 - t1).count();
+		}
+		else {
+			duration = duration_cast<microseconds>(t2 - t1).count();
+		}
+
+		// Calculate the runtime relative to qsort
+		long long relDuration = duration / durationQSort;
+
+		// Print and log results
 		printf("\nTime needed for sorting: %d microseconds \n", duration);
-		logfile << "\n"+ algorithm + ";" + to_string(length) + ";" + inputOrder + ";" + to_string(duration);
+		logfile << "\n" + algorithm + ";" + to_string(length) + ";" + inputOrder + ";" + to_string(duration) + ";" + to_string(relDuration) ;
 
 		// Optional printing of the array after sorting
 		if (outputDataPrint == true) {
@@ -223,7 +236,7 @@ int main()
 	// Clear old log file
 	ofstream logfile;
 	logfile.open("logfile" + std::to_string(length) + ".csv");
-	logfile << "Algorithm;input length;input type;Time (microseconds)";
+	logfile << "Algorithm;input length;input type;Time (microseconds); Relative runtime (to qsort)";
 	logfile.close();
 
 	genData();
