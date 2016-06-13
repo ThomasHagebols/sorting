@@ -18,18 +18,23 @@ using namespace std::chrono;
 template<typename Run>
 inline bool run_greater(const Run& x, const Run& y)
 {
+	return x.back() > y.back();
+}
+
+template<typename Run>
+inline bool run_front_greater(const Run& x, const Run& y)
+{
 	return x.front() > y.front();
 }
 
-// reverse less predicate to turn min-heap into max-heap
 template<typename Run>
 inline bool run_less(const Run& x, const Run& y)
 {
-	return run_greater(y, x);
+	return x.back() < y.back();
 }
 
 template<typename Iterator>
-int patience_sort(Iterator begin, Iterator end)
+long long patience_sort(Iterator begin, Iterator end)
 {
 	typedef typename std::iterator_traits<Iterator>::value_type RunType;
 	typedef std::list<RunType> Run;
@@ -46,35 +51,37 @@ int patience_sort(Iterator begin, Iterator end)
 		if (i == runs.end())
 			runs.push_back(newRun);
 		else
-			i->emplace_front(*it);
+			i->emplace_back(*it);
 	}
 	high_resolution_clock::time_point t2 = high_resolution_clock::now();
 
-	// sorted array already satisfies heap property for min-heap
-	// TODO reverse sort order
+	// Make min heap and use the heap to merge more efficiently
 	high_resolution_clock::time_point t3 = high_resolution_clock::now();
-	for (Iterator it = begin; it != end; it++)
-	{
-		std::pop_heap(runs.begin(), runs.end(), run_less<Run>);
-		*it = runs.back().front();
-		runs.back().pop_front();
-		if (runs.back().empty())
+	make_heap(runs.begin(), runs.end(), run_front_greater<Run>);
+	for (Iterator it = begin; it != end; it++) {
+		pop_heap(runs.begin(), runs.end(), run_front_greater<Run>);
+		Run &smallPile = runs.back();
+		*it = smallPile.front();
+		smallPile.pop_front();
+		if (smallPile.empty()) {
 			runs.pop_back();
-		else
-			std::push_heap(runs.begin(), runs.end(), run_less<Run>);
+		}
+		else {
+			push_heap(runs.begin(), runs.end(), run_front_greater<Run>);
+		}
 	}
+	assert(runs.empty());
 	high_resolution_clock::time_point t4 = high_resolution_clock::now();
 
 
-	auto durationPile = duration_cast<microseconds>(t2 - t1).count();
-	auto durationMerge = duration_cast<microseconds>(t4 - t3).count();
-	printf("\nTime needed for pileCre: %d microseconds ", durationPile);
-	printf("\nTime needed for merging: %d microseconds ", durationMerge);
+	long long pileCreTime = duration_cast<microseconds>(t2 - t1).count();
+	long long mergeTime = duration_cast<microseconds>(t4 - t3).count();
+	printf("\nTime needed for pileCre: %d microseconds ", pileCreTime);
+	printf("\nTime needed for merging: %d microseconds ", mergeTime);
 
-	return 0;
+	return pileCreTime;
 }
 
-int patsort(long long values[], int const length) {
-	patience_sort(values, values + length);
-	return 0;
+long long patsort(long long values[], int const length) {
+	return patience_sort(values, values + length);
 }

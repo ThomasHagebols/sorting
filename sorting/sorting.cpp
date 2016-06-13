@@ -3,7 +3,6 @@
 // The runtime of the different algorithms will be timed
 
 #include "stdafx.h"
-#include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -17,7 +16,7 @@ using namespace std::chrono;
 
 // Initialize parameters
 const int length = 100000;
-int alg[] = { 0, 2, 3 };
+int alg[] = { 0, 1, 2, 3 };
 bool inputDataPrint = false;
 bool outputDataPrint = false;
 bool const timeSeed = false;
@@ -29,11 +28,10 @@ long long random[length] = {};
 long long semiSorted[length] = {};
 long long reverseSemiSorted[length] = {};
 long long valuesCopy[length] = {};
-long long pingPongSwap[length] = {};
 
-int patsort(long long values[], const int length);
-int patsortplus(long long values[], const int length);
-int pThreeSort(long long values[], long long pingPongSwap[], const int length);
+long long patsort(long long values[], const int length);
+long long patsortplus(long long values[], const int length);
+long long pThreeSort(long long values[], const int length);
 
 int compare_doubles(const void *a, const void *b)
 {
@@ -43,27 +41,9 @@ int compare_doubles(const void *a, const void *b)
 	return (*da > *db) - (*da < *db);
 }
 
-//#define __const const;
-////#define __COMPAR_FN_T;
-//typedef int(*__compar_fn_t) (const void *, const void *);
-//typedef __compar_fn_t comparison_fn_t;
-//typedef int(*__compar_d_fn_t) (const void *, const void *);
-//void _quicksort(void *const pbase, size_t total_elems, size_t size, __compar_d_fn_t cmp);
-
-
-//TODO cmp cleanen
 int cmpfunc(const void * a, const void * b)
 {
 	return (*(long long*)a - *(long long*)b);
-}
-
-int int_cmp(const void *a, const void *b)
-{
-	const int *ia = (const int *)a; // casting pointer types
-	const int *ib = (const int *)b;
-	return *ia - *ib;
-	/* integer comparison: returns negative if b > a
-	and positive if a > b */
 }
 
 int addNoise(long long values[], int const size)
@@ -129,8 +109,10 @@ int doSorts(long long values[], const string inputOrder, const int length)
 
 	string algorithm = {};
 	high_resolution_clock::time_point t1;
+	high_resolution_clock::time_point t2;
 	long long duration = {};
 	long long durationQSort = {};
+	float relDuration = {};
 
 	// Optional printing of the generated array before sorting
 	if (inputDataPrint == true) {
@@ -145,6 +127,8 @@ int doSorts(long long values[], const string inputOrder, const int length)
 	for (int i : alg)
 	{
 		std::copy(values, values + length, valuesCopy);
+		long long pileCreTime = {};
+		long long mergeTime = {};
 
 		switch (i)
 		{
@@ -160,29 +144,27 @@ int doSorts(long long values[], const string inputOrder, const int length)
 			cout << "\n" + algorithm + ":" << endl;
 			t1 = high_resolution_clock::now();
 			qsort(valuesCopy, length, sizeof(long long), cmpfunc);
-			//TODO fix GNU quicksort
-			/*_quicksort(copyrandom, length, sizeof(long long), compare_doubles);*/
 			break;
 		case 1:
 			//Patience sort
 			algorithm = "PatSort";
 			cout << "\n" + algorithm + ":" << endl;
 			t1 = high_resolution_clock::now();
-			patsort(valuesCopy, length);
+			pileCreTime = patsort(valuesCopy, length);
 			break;
 		case 2:
 			//Patience+ sort
 			algorithm = "PatPlus";
 			cout << "\n" + algorithm + ":" << endl;
 			t1 = high_resolution_clock::now();
-			patsortplus(valuesCopy, length);
+			pileCreTime = patsortplus(valuesCopy, length);
 			break;
 		case 3:
 			//P3 sort
 			algorithm = "P3";
 			cout << "\n" + algorithm + ":" << endl;
 			t1 = high_resolution_clock::now();
-			pThreeSort(valuesCopy, pingPongSwap, length);
+			pileCreTime = pThreeSort(valuesCopy, length);
 			break;
 		case 4:
 			//TimSort
@@ -198,7 +180,7 @@ int doSorts(long long values[], const string inputOrder, const int length)
 			t1 = high_resolution_clock::now();
 			break;
 		}
-		high_resolution_clock::time_point t2 = high_resolution_clock::now();
+		t2 = high_resolution_clock::now();
 
 		//Calculate and print execution time
 		if (algorithm == "qsort") {
@@ -207,14 +189,16 @@ int doSorts(long long values[], const string inputOrder, const int length)
 		}
 		else {
 			duration = duration_cast<microseconds>(t2 - t1).count();
+			mergeTime = duration - pileCreTime;
 		}
 
 		// Calculate the runtime relative to qsort
-		long long relDuration = duration / durationQSort;
+		if (durationQSort != 0)
+			relDuration = (float)duration / (float)durationQSort;
 
 		// Print and log results
 		printf("\nTime needed for sorting: %d microseconds \n", duration);
-		logfile << "\n" + algorithm + ";" + to_string(length) + ";" + inputOrder + ";" + to_string(duration) + ";" + to_string(relDuration) ;
+		logfile << "\n" + algorithm + ";" + to_string(length) + ";" + inputOrder + ";" + to_string(duration) + ";" + to_string(pileCreTime) + ";" + to_string(mergeTime) + ";" + to_string(relDuration);
 
 		// Optional printing of the array after sorting
 		if (outputDataPrint == true) {
@@ -236,19 +220,23 @@ int main()
 	// Clear old log file
 	ofstream logfile;
 	logfile.open("logfile" + std::to_string(length) + ".csv");
-	logfile << "Algorithm;input length;input type;Time (microseconds); Relative runtime (to qsort)";
+	logfile << "Algorithm;input length;input type;Time (microseconds);Pile creation time;Merge time;Relative runtime (to qsort) Devide by 1000";
 	logfile.close();
 
 	genData();
 	printf("Number of values to be sorted: %d \n", length);
 	printf("Using time as seed value: %s \n", timeSeed ? "true" : "false");
 
-	cout << "\n\n-----------------Random data-----------------" << endl;
-	doSorts(random, "Random",length);
-	cout << "\n\n-------- Increasing semi sorted data---------" << endl;
-	doSorts(semiSorted, "IncreasingSemiSorted",length);
-	cout << "\n\n--------Reverse semi sorted data----------" << endl;
-	doSorts(reverseSemiSorted, "reverseSemiSorted", length);
-
+	for (int i = { 0 }; i < 25; i++) {
+		cout << "=================================================" << endl;
+		cout << "Loop " + to_string(i + 1) << endl;
+		cout << "=================================================" << endl;
+		cout << "\n\n-----------------Random data-----------------" << endl;
+		doSorts(random, "Random", length);
+		cout << "\n\n-------- Increasing semi sorted data---------" << endl;
+		doSorts(semiSorted, "IncreasingSemiSorted", length);
+		cout << "\n\n--------Reverse semi sorted data----------" << endl;
+		doSorts(reverseSemiSorted, "reverseSemiSorted", length);
+	}
     return 0;
 }
