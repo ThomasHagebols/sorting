@@ -76,8 +76,8 @@ long long patience_sort(Iterator begin, Iterator end)
 
 	long long pileCreTime = duration_cast<microseconds>(t2 - t1).count();
 	long long mergeTime = duration_cast<microseconds>(t4 - t3).count();
-	printf("\nTime needed for pileCre: %d microseconds ", pileCreTime);
-	printf("\nTime needed for merging: %d microseconds ", mergeTime);
+	//printf("\nTime needed for pileCre: %d microseconds ", pileCreTime);
+	//printf("\nTime needed for merging: %d microseconds ", mergeTime);
 
 	return pileCreTime;
 }

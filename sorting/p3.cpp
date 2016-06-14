@@ -91,13 +91,13 @@ long long pThree_Sort(Iterator begin, Iterator end, int const length) {
 	delete [] runSizes;
 	runSizes = NULL;
 
-	runs.erase(runs.begin(), runs.end());
+	runs.erase(runs.begin(), runs.end()); // TODO maybe remove this
 	high_resolution_clock::time_point t4 = high_resolution_clock::now();
 
 	long long pileCreTime = duration_cast<microseconds>(t2 - t1).count();
 	long long mergeTime = duration_cast<microseconds>(t4 - t3).count();
-	printf("\nTime needed for pileCre: %d microseconds ", pileCreTime);
-	printf("\nTime needed for merging: %d microseconds ", mergeTime);
+	//printf("\nTime needed for pileCre: %d microseconds ", pileCreTime);
+	//printf("\nTime needed for merging: %d microseconds ", mergeTime);
 
 	return pileCreTime;
 }
