@@ -10,11 +10,11 @@
 #include <cstdlib>
 #include <malloc.h>
 #include <tuple>
-#define lngth 5000
+
 //using namespace std::chrono;
 using namespace std;
 
-int UPingPongMerge(vector<list<long long>> runs, vector<int> runSize, int const length);
+int UPingPongMerge(vector<list<long long>> runs, int runSize[], int const length);
 
 //to do: veranderen int naar Pile voor accepteren van runs
 
@@ -29,11 +29,12 @@ int insertArray(long long elemArray[], list<long long> pile, int runSize, int ne
 	}
 	return 0;
 }
-int UPingPongMerge(vector<list<long long>> runs, vector<int> runSize, int const length)
+int UPingPongMerge(vector<list<long long>> runs, int runSize[], int const length)
 {
 	//initialize array with number of integers
-    long long elems1[lngth];
-	long long elems2[lngth];
+	//const int length = 36;
+    long long elems1[length];
+	long long elems2[length];
 	vector<pair<int, int>> runSizeRef;
 	//fill array with index and sizes
 		for (int i = { 0 }; i != runs.size(); i++) {
@@ -57,7 +58,7 @@ int UPingPongMerge(vector<list<long long>> runs, vector<int> runSize, int const 
 	tuple<int, int, int> curRun = elemsRun.front();
 	int index = { 0 };
 	while (elemsRun.size() >= 2) {
-		if (index == (elemsRun.size()-1) || (get<2>(curRun) + get<2>(elemsRun[index +1])) > (get<2>(elemsRun.front()) + get<2>(elemsRun[1]))) {
+		if (index == (elemsRun.size() -1) || (get<2>(curRun) + get<2>(elemsRun[index +1])) > (get<2>(elemsRun.front()) + get<2>(elemsRun[1]))) {
 			curRun = elemsRun.front();
 			index = 0;
 		}
@@ -89,19 +90,15 @@ int UPingPongMerge(vector<list<long long>> runs, vector<int> runSize, int const 
 		get<2>(elemsRun[index]) += get<2>(elemsRun[index + 1]);
 		elemsRun.erase(elemsRun.begin() + index +1);
 		index++;
-		cout << index << endl;
-		cout << "-----------" << endl;
-		cout << elemsRun.size() << endl;
-		if (index < elemsRun.size()) {
+		if (elemsRun.size() > 1) {
 			curRun = elemsRun[index];
 		}
 	}
-	int test;
-	long long results[lngth];
+	long long results[length];
 	if (get<0>(elemsRun[0]) == 1) {
-		copy(elems1, elems1 + lngth, results);
+		copy(elems1, elems1 + length, result);
 	} else {
-		copy(elems2, elems2 + lngth, results);
+		copy(elems2, elems2 + length, result);
 	}
 	return 0;
 }
