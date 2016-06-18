@@ -19,11 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="p3.cpp" />
     <ClCompile Include="patience.cpp" />
-    <ClCompile Include="patienceplus.cpp" />
-    <ClCompile Include="PingPong.cpp" />
-    <ClCompile Include="qsortGNU.cpp" />
-    <ClCompile Include="quicksortOwn.cpp" />
+    <ClCompile Include="patiencePlus.cpp" />
+    <ClCompile Include="pingPong.cpp" />
+    <ClCompile Include="qsortOwn.cpp" />
     <ClCompile Include="sorting.cpp" />
   </ItemGroup>
   <ItemGroup>

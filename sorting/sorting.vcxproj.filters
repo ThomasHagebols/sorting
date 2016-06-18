@@ -21,16 +21,16 @@
     <ClCompile Include="patience.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="patienceplus.cpp">
+    <ClCompile Include="p3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="quicksortOwn.cpp">
+    <ClCompile Include="qsortOwn.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="qsortGNU.cpp">
+    <ClCompile Include="pingPong.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PingPong.cpp">
+    <ClCompile Include="patiencePlus.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

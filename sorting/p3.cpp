@@ -1,9 +1,8 @@
-#include <math.h>
 #include <algorithm>
-#include <cassert>
 #include <iterator>
 #include <list>
 #include <vector>
+#include <cassert>
 
 // Needed for timer
 #include <chrono>
@@ -11,27 +10,22 @@
 //#include <iostream>
 
 using namespace std;
-using namespace chrono;
+using namespace std::chrono;
+
+int UPingPongMerge(vector<list<long long>> runs, int runSize[], const int length);
 
 inline bool cmp_greater(const long long& x, const long long& y)
 {
 	return x > y;
 }
 
-// reverse less predicate to turn min-heap into max-heap
 inline bool cmp_less(const long long& x, const long long& y)
 {
 	return x < y;
 }
 
-template<typename Run>
-inline bool run_front_greater(const Run& x, const Run& y)
-{
-	return x.front() > y.front();
-}
-
 template<class Iterator>
-long long patience_sort_plus(Iterator begin, Iterator end, int const length) {
+long long pThree_Sort(Iterator begin, Iterator end, int const length) {
 	typedef typename iterator_traits<Iterator>::value_type RunType;
 	typedef list<RunType> Run;
 
@@ -73,26 +67,24 @@ long long patience_sort_plus(Iterator begin, Iterator end, int const length) {
 	}
 	high_resolution_clock::time_point t2 = high_resolution_clock::now();
 
-
-
-	// Make min heap and use the heap to merge more efficiently (priority queue)
+	// Merge runs using ping pong
 	high_resolution_clock::time_point t3 = high_resolution_clock::now();
-	make_heap(runs.begin(), runs.end(), run_front_greater<Run>);
-	for (Iterator it = begin; it != end; it++) {
-		// Take top most run from heap and take the head element from that run
-		pop_heap(runs.begin(), runs.end(), run_front_greater<Run>);
-		Run &smallPile = runs.back();
-		*it = smallPile.front();
-		smallPile.pop_front();
-		// If the run is empty remove it from the runs array. Else push it back into the heap
-		if (smallPile.empty()){
-			runs.pop_back();
-		}
-		else {
-			push_heap(runs.begin(), runs.end(), run_front_greater<Run>);
-		}
+	int nrRuns = runs.size();
+
+	int * runSizes;
+	runSizes = new int[nrRuns];
+
+	for (int j = { 0 }; j < runs.size(); j++) {
+		runSizes[j] = runs[j].size();
 	}
-	assert(runs.empty());
+
+	UPingPongMerge(runs, runSizes, length);
+
+	delete [] runSizes;
+	runSizes = NULL;
+
+	// Erase runs object before end of timer (Erasing is slow)
+	runs.erase(runs.begin(), runs.end());
 	high_resolution_clock::time_point t4 = high_resolution_clock::now();
 
 	long long pileCreTime = duration_cast<microseconds>(t2 - t1).count();
@@ -103,7 +95,6 @@ long long patience_sort_plus(Iterator begin, Iterator end, int const length) {
 	return pileCreTime;
 }
 
-long long patsortplus(long long values[], const int length) {
-
-	return patience_sort_plus(values, values + length, length);
+long long  pThreeSort(long long values[], const int length) {
+	return pThree_Sort(values, values + length, length);
 }

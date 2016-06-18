@@ -1,75 +1,91 @@
 /* Code from http://euler.math.uga.edu/wiki/index.php?title=Patience_sorting
 TODO take a look at https://en.wikibooks.org/wiki/Algorithm_Implementation/Sorting/Patience_sort */
 
-#include <vector>
 #include <algorithm>
-#include <stack>
+#include <cassert>
 #include <iterator>
+#include <list>
+#include <vector>
 
 // Needed for timer
-#include <iostream>
-#include <ctime>
 #include <chrono>
+#include <ctime>
+//#include <iostream>
+
+using namespace std;
 using namespace std::chrono;
 
-template<typename PileType>
-bool pile_less(const PileType& x, const PileType& y)
+template<typename Run>
+inline bool run_greater(const Run& x, const Run& y)
 {
-	return x.top() < y.top();
+	return x.back() > y.back();
 }
 
-// reverse less predicate to turn max-heap into min-heap
-template<typename PileType>
-bool pile_more(const PileType& x, const PileType& y)
+template<typename Run>
+inline bool run_front_greater(const Run& x, const Run& y)
 {
-	return pile_less(y, x);
+	return x.front() > y.front();
+}
+
+template<typename Run>
+inline bool run_less(const Run& x, const Run& y)
+{
+	return x.back() < y.back();
 }
 
 template<typename Iterator>
-void patience_sort(Iterator begin, Iterator end)
+long long patience_sort(Iterator begin, Iterator end)
 {
-	typedef typename std::iterator_traits<Iterator>::value_type DataType;
-	typedef std::stack<DataType> PileType;
-	std::vector<PileType> piles;
+	typedef typename std::iterator_traits<Iterator>::value_type RunType;
+	typedef std::list<RunType> Run;
 
-
+	std::vector<Run> runs;
+	
+	// Create sorted runs
 	high_resolution_clock::time_point t1 = high_resolution_clock::now();
 	for (Iterator it = begin; it != end; it++)
 	{
-		PileType new_pile;
-		new_pile.push(*it);
-		typename std::vector<PileType>::iterator insert_it =
-			std::lower_bound(piles.begin(), piles.end(), new_pile,
-				pile_less<PileType>);
-		if (insert_it == piles.end())
-			piles.push_back(new_pile);
+		Run newRun;
+		newRun.emplace_front(*it);
+		// Check if the new element can be added to back of an existing pile or if a new pile should be created
+		typename std::vector<Run>::iterator i =
+			std::upper_bound(runs.begin(), runs.end(), newRun, run_greater<Run>);
+		if (i == runs.end())
+			runs.push_back(newRun);
 		else
-			insert_it->push(*it);
+			i->emplace_back(*it);
 	}
 	high_resolution_clock::time_point t2 = high_resolution_clock::now();
 
-	// sorted array already satisfies heap property for min-heap
+	// Make min heap and use the heap to merge more efficiently (priority queue)
 	high_resolution_clock::time_point t3 = high_resolution_clock::now();
-	for (Iterator it = begin; it != end; it++)
-	{
-		std::pop_heap(piles.begin(), piles.end(), pile_more<PileType>);
-		*it = piles.back().top();
-		piles.back().pop();
-		if (piles.back().empty())
-			piles.pop_back();
-		else
-			std::push_heap(piles.begin(), piles.end(), pile_more<PileType>);
+	make_heap(runs.begin(), runs.end(), run_front_greater<Run>);
+	for (Iterator it = begin; it != end; it++) {
+		// Take top most run from heap and take the head element from that run
+		pop_heap(runs.begin(), runs.end(), run_front_greater<Run>);
+		Run &smallPile = runs.back();
+		*it = smallPile.front();
+		smallPile.pop_front();
+		// If the run is empty remove it from the runs array. Else push it back into the heap
+		if (smallPile.empty()) {
+			runs.pop_back();
+		}
+		else {
+			push_heap(runs.begin(), runs.end(), run_front_greater<Run>);
+		}
 	}
+	assert(runs.empty());
 	high_resolution_clock::time_point t4 = high_resolution_clock::now();
 
 
-	auto durationPile = duration_cast<microseconds>(t2 - t1).count();
-	auto durationMerge = duration_cast<microseconds>(t4 - t3).count();
-	printf("\nTime needed for pileCre: %d microseconds ", durationPile);
-	printf("\nTime needed for merging: %d microseconds ", durationMerge);
+	long long pileCreTime = duration_cast<microseconds>(t2 - t1).count();
+	long long mergeTime = duration_cast<microseconds>(t4 - t3).count();
+	//printf("\nTime needed for pileCre: %d microseconds ", pileCreTime);
+	//printf("\nTime needed for merging: %d microseconds ", mergeTime);
+
+	return pileCreTime;
 }
 
-int patsort(long long values[], int const length) {
-	patience_sort(values, values + length);
-	return 0;
+long long patsort(long long values[], int const length) {
+	return patience_sort(values, values + length);
 }
