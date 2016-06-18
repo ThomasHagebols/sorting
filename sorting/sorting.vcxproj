@@ -23,7 +23,6 @@
     <ClCompile Include="patience.cpp" />
     <ClCompile Include="patiencePlus.cpp" />
     <ClCompile Include="pingPong.cpp" />
-    <ClCompile Include="qsortGNU.cpp" />
     <ClCompile Include="qsortOwn.cpp" />
     <ClCompile Include="sorting.cpp" />
   </ItemGroup>

@@ -21,9 +21,6 @@
     <ClCompile Include="patience.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="qsortGNU.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="p3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

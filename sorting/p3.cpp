@@ -7,7 +7,7 @@
 // Needed for timer
 #include <chrono>
 #include <ctime>
-#include <iostream>
+//#include <iostream>
 
 using namespace std;
 using namespace std::chrono;
@@ -37,10 +37,13 @@ long long pThree_Sort(Iterator begin, Iterator end, int const length) {
 	// sort into runs
 	high_resolution_clock::time_point t1 = high_resolution_clock::now();
 	for (Iterator it = begin; it != end; it++) {
+		// Check if (the new element should be added to frond or back of an existing pile) OR (a new pile should be created containing the new element)
+		// Use headValues and tailValues to increase the speed of searching the upper bound and lower bound
 		i = upper_bound(tailValues.begin(), tailValues.end(), *it, cmp_greater);
 		if (i == tailValues.end()) {
 			i = lower_bound(headValues.begin(), headValues.end(), *it, cmp_less);
 			if (i == headValues.end()) {
+				// Create new run
 				Run newRun;
 				newRun.emplace_front(*it);
 
@@ -49,12 +52,14 @@ long long pThree_Sort(Iterator begin, Iterator end, int const length) {
 				tailValues.push_back(*it);
 			}
 			else {
+				// Add current element to front of a run
 				int index = distance(headValues.begin(), i);
 				runs[index].emplace_front(*it);
 				headValues[index] = *it;
 			}
 		}
 		else {
+			// Add element to the back of a run
 			int index = distance(tailValues.begin(), i);
 			runs[index].emplace_back(*it);
 			tailValues[index] = *it;
@@ -65,13 +70,9 @@ long long pThree_Sort(Iterator begin, Iterator end, int const length) {
 	// Merge runs using ping pong
 	high_resolution_clock::time_point t3 = high_resolution_clock::now();
 	int nrRuns = runs.size();
-	cout << nrRuns << endl;
 
 	int * runSizes;
 	runSizes = new int[nrRuns];
-
-	//long long * result;
-	//result = new long long[length];
 
 	for (int j = { 0 }; j < runs.size(); j++) {
 		runSizes[j] = runs[j].size();
@@ -79,19 +80,11 @@ long long pThree_Sort(Iterator begin, Iterator end, int const length) {
 
 	UPingPongMerge(runs, runSizes, length);
 
-	//int x = {};
-	//for (Iterator it = begin; it != end; it++) {
-	//	*it = result[x];
-	//	x++;
-	//}
-
-	//delete[] result;
-	//result = NULL;
-
 	delete [] runSizes;
 	runSizes = NULL;
 
-	runs.erase(runs.begin(), runs.end()); // TODO maybe remove this
+	// Erase runs object before end of timer (Erasing is slow)
+	runs.erase(runs.begin(), runs.end());
 	high_resolution_clock::time_point t4 = high_resolution_clock::now();
 
 	long long pileCreTime = duration_cast<microseconds>(t2 - t1).count();

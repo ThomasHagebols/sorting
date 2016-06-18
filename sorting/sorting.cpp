@@ -15,7 +15,7 @@ using namespace std;
 using namespace std::chrono;
 
 // Initialize parameters
-const int length = 100000;
+const int length = 12800000;
 int alg[] = { 0, 1, 2, 3 };
 bool inputDataPrint = false;
 bool outputDataPrint = false;
@@ -32,14 +32,6 @@ long long valuesCopy[length] = {};
 long long patsort(long long values[], const int length);
 long long patsortplus(long long values[], const int length);
 long long pThreeSort(long long values[], const int length);
-
-int compare_doubles(const void *a, const void *b)
-{
-	const long long *da = (const long long *)a;
-	const long long *db = (const long long *)b;
-
-	return (*da > *db) - (*da < *db);
-}
 
 int cmpfunc(const void * a, const void * b)
 {
@@ -217,17 +209,23 @@ int doSorts(long long values[], const string inputOrder, const int length)
 
 int main()
 {
-	// Clear old log file
-	ofstream logfile;
-	logfile.open("logfile" + std::to_string(length) + ".csv");
-	logfile << "Algorithm;input length;input type;Time (microseconds);Pile creation time;Merge time;Relative runtime (to qsort) Devide by 1000";
-	logfile.close();
+	// Create log file and add headers (CSV file)
+	if (ifstream("logfile" + std::to_string(length) + ".csv"))
+	{
+		std::cout << "File already exists" << std::endl;
+	}
+	else {
+		ofstream logfile;
+		logfile.open("logfile" + std::to_string(length) + ".csv");
+		logfile << "Algorithm;input length;input type;Time (microseconds);Pile creation time;Merge time;Relative runtime (to qsort) Devide by 1000";
+		logfile.close();
+	}
 
 	genData();
 	printf("Number of values to be sorted: %d \n", length);
 	printf("Using time as seed value: %s \n", timeSeed ? "true" : "false");
 
-	for (int i = { 0 }; i < 25; i++) {
+	for (int i = { 0 }; i < 1; i++) {
 		cout << "=================================================" << endl;
 		cout << "Loop " + to_string(i + 1) << endl;
 		cout << "=================================================" << endl;

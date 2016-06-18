@@ -10,7 +10,7 @@ TODO take a look at https://en.wikibooks.org/wiki/Algorithm_Implementation/Sorti
 // Needed for timer
 #include <chrono>
 #include <ctime>
-#include <iostream>
+//#include <iostream>
 
 using namespace std;
 using namespace std::chrono;
@@ -40,12 +40,14 @@ long long patience_sort(Iterator begin, Iterator end)
 	typedef std::list<RunType> Run;
 
 	std::vector<Run> runs;
-
+	
+	// Create sorted runs
 	high_resolution_clock::time_point t1 = high_resolution_clock::now();
 	for (Iterator it = begin; it != end; it++)
 	{
 		Run newRun;
 		newRun.emplace_front(*it);
+		// Check if the new element can be added to back of an existing pile or if a new pile should be created
 		typename std::vector<Run>::iterator i =
 			std::upper_bound(runs.begin(), runs.end(), newRun, run_greater<Run>);
 		if (i == runs.end())
@@ -55,14 +57,16 @@ long long patience_sort(Iterator begin, Iterator end)
 	}
 	high_resolution_clock::time_point t2 = high_resolution_clock::now();
 
-	// Make min heap and use the heap to merge more efficiently
+	// Make min heap and use the heap to merge more efficiently (priority queue)
 	high_resolution_clock::time_point t3 = high_resolution_clock::now();
 	make_heap(runs.begin(), runs.end(), run_front_greater<Run>);
 	for (Iterator it = begin; it != end; it++) {
+		// Take top most run from heap and take the head element from that run
 		pop_heap(runs.begin(), runs.end(), run_front_greater<Run>);
 		Run &smallPile = runs.back();
 		*it = smallPile.front();
 		smallPile.pop_front();
+		// If the run is empty remove it from the runs array. Else push it back into the heap
 		if (smallPile.empty()) {
 			runs.pop_back();
 		}
