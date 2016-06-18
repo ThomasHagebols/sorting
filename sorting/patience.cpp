@@ -1,5 +1,4 @@
 /* Code from http://euler.math.uga.edu/wiki/index.php?title=Patience_sorting
-TODO take a look at https://en.wikibooks.org/wiki/Algorithm_Implementation/Sorting/Patience_sort */
 
 #include <algorithm>
 #include <cassert>
