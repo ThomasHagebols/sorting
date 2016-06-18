@@ -7,4 +7,4 @@ Project contains 3 implementations of the patiance sort algorithm.
  - Patience plus
  - P3 (with naïve unbalanced ping pong merge)
 
-Our implementation is build following the following paper: "Virtue: Revisiting Merge and Sort on Modern Processors" by Badrish Chandramouli and Jonathan Goldstein.
+Our implementation is based on the following paper: "Virtue: Revisiting Merge and Sort on Modern Processors" by Badrish Chandramouli and Jonathan Goldstein.
